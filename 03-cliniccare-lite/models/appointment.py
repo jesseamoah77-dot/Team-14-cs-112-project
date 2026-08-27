@@ -119,7 +119,6 @@ def mark_reminder_sent(appointment_id):
         _apply
     )
 
-
 def for_patient(patient_id):
     return {
         aid: appointment
