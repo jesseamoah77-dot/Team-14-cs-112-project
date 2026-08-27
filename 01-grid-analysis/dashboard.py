@@ -62,6 +62,7 @@ with overview:
     )
 
     st.subheader("Substations by region")
+
     region_counts = substations["Region"].value_counts().reset_index()
     region_counts.columns = ["Region", "Substations"]
 
@@ -117,11 +118,16 @@ with overview:
             use_container_width=True
         )
 
+
 with network:
     st.subheader("The grid as a graph")
 
     regions = ["All"] + sorted(substations["Region"].unique())
-    chosen = st.selectbox("Filter to region", regions)
+    chosen = st.selectbox(
+        "Filter to region",
+        regions,
+        key="network_region"
+    )
 
     G = griddata.build_graph(data)
 
@@ -151,16 +157,33 @@ with network:
     degree = dict(G.degree())
 
     node_trace = go.Scatter(
-        x=[G.nodes[n]["lon"] for n in G.nodes],
-        y=[G.nodes[n]["lat"] for n in G.nodes],
+        x=[
+            G.nodes[n]["lon"]
+            for n in G.nodes
+        ],
+        y=[
+            G.nodes[n]["lat"]
+            for n in G.nodes
+        ],
         mode="markers",
         marker=dict(
-            size=[8 + 4 * degree[n] for n in G.nodes],
-            color=[degree[n] for n in G.nodes],
+            size=[
+                8 + 4 * degree[n]
+                for n in G.nodes
+            ],
+            color=[
+                degree[n]
+                for n in G.nodes
+            ],
             colorscale="Blues",
             showscale=True,
-            colorbar=dict(title="Degree"),
-            line=dict(width=1, color="#333"),
+            colorbar=dict(
+                title="Degree"
+            ),
+            line=dict(
+                width=1,
+                color="#333"
+            ),
         ),
         text=[
             f"{n}<br>"
@@ -178,7 +201,10 @@ with network:
                 x=edge_x,
                 y=edge_y,
                 mode="lines",
-                line=dict(width=0.7, color="#aaa"),
+                line=dict(
+                    width=0.7,
+                    color="#aaa"
+                ),
                 hoverinfo="none"
             ),
             node_trace,
@@ -188,15 +214,24 @@ with network:
     fig.update_layout(
         showlegend=False,
         height=560,
-        margin=dict(l=10, r=10, t=10, b=10),
+        margin=dict(
+            l=10,
+            r=10,
+            t=10,
+            b=10
+        ),
         xaxis_title="Longitude",
         yaxis_title="Latitude"
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
     if metrics is not None:
         st.subheader("Centrality rankings (main component)")
+
         st.dataframe(
             metrics.head(15),
             use_container_width=True
@@ -321,6 +356,7 @@ with network:
         use_container_width=True
     )
 
+
 with geography:
     st.subheader("Substation map")
 
@@ -429,6 +465,7 @@ with geography:
         use_container_width=True,
     )
 
+
 with reliability:
     st.subheader(
         "N-1 contingency: what breaks if one substation is lost?"
@@ -506,6 +543,40 @@ with reliability:
             use_container_width=True,
             hide_index=True,
         )
+
+    st.subheader("Maintenance Status Heatmap")
+
+    heatmap_df = (
+        lines.groupby(
+            ["Voltage (kV)", "Status"]
+        )
+        .size()
+        .reset_index(name="Count")
+    )
+
+    heatmap_pivot = heatmap_df.pivot(
+        index="Voltage (kV)",
+        columns="Status",
+        values="Count"
+    ).fillna(0)
+
+    heatmap_fig = px.imshow(
+        heatmap_pivot,
+        text_auto=True,
+        aspect="auto",
+        labels={
+            "x": "Line Status",
+            "y": "Voltage (kV)",
+            "color": "Number of Lines"
+        },
+        title="Line Status by Voltage Level"
+    )
+
+    st.plotly_chart(
+        heatmap_fig,
+        use_container_width=True
+    )
+
 
 with search:
     st.subheader("Substation Finder")
