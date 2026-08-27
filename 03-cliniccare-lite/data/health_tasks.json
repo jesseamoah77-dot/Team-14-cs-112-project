@@ -1,0 +1,30 @@
+{
+  "T001": {
+    "clinic_id": "C001",
+    "title": "Weekly blood-pressure log",
+    "description": "Record your morning readings each day and submit them as a CSV with the columns Date and Systolic.",
+    "due_date": "2026-09-03",
+    "assigned_patient_ids": [
+      "11112024",
+      "22222025"
+    ],
+    "expected_fields": [
+      "Date",
+      "Systolic"
+    ],
+    "created_at": "2026-08-27 19:28:16"
+  },
+  "T002": {
+    "clinic_id": "C001",
+    "title": "Updated contact details form",
+    "description": "Download the intake form, fill in your current contact details and upload it as a PDF or text file.",
+    "due_date": "2026-09-03",
+    "assigned_patient_ids": [
+      "11112024",
+      "22222025",
+      "33332026"
+    ],
+    "expected_fields": [],
+    "created_at": "2026-08-27 19:28:16"
+  }
+}

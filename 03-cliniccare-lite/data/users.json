@@ -1,0 +1,60 @@
+{
+  "12350000": {
+    "name": "Akosua Sarpong",
+    "email": "doc@example.com",
+    "password": "$2b$12$0Y303v6M1KKh0E7izTdYgedv4wDfaDfP5NuzflueJp6a0/HYAg/N.",
+    "role": "clinician",
+    "theme": "dark",
+    "clinic_id": "C001"
+  },
+  "11112024": {
+    "name": "Kojo Mensah",
+    "email": "11112024@example.com",
+    "password": "$2b$12$wmaeyBaS5/1VR7b2Plo4FuIUVQIso.xOCJCvPkEp3pCx8ZlbK4XNO",
+    "role": "patient",
+    "theme": "colorful",
+    "clinic_id": "C001",
+    "engagement": {
+      "points": 15,
+      "streak": 1,
+      "history": [
+        {
+          "at": "2026-08-27 19:28:16",
+          "points": 10,
+          "reason": "Task submitted on time"
+        },
+        {
+          "at": "2026-08-27 19:28:16",
+          "points": 5,
+          "reason": "Appointment attended"
+        }
+      ]
+    }
+  },
+  "22222025": {
+    "name": "Abena Osei",
+    "email": "22222025@example.com",
+    "password": "$2b$12$AZeG8jMcE.AYNSqfaI6lk.ECFGl0nFy8GOr8vHYlTBw5i/nyoRKl6",
+    "role": "patient",
+    "theme": "colorful",
+    "clinic_id": "C001",
+    "engagement": {
+      "points": 0,
+      "streak": 0,
+      "history": []
+    }
+  },
+  "33332026": {
+    "name": "Yaw Owusu",
+    "email": "33332026@example.com",
+    "password": "$2b$12$2bHrECHKVDRBsavEHvcnEuRNPbVaF7AbBdvQnmARz4RcXIsPYdYyW",
+    "role": "patient",
+    "theme": "colorful",
+    "clinic_id": "C001",
+    "engagement": {
+      "points": 0,
+      "streak": 0,
+      "history": []
+    }
+  }
+}

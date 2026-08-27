@@ -1,0 +1,26 @@
+{
+  "A001": {
+    "clinic_id": "C001",
+    "patient_id": "11112024",
+    "when": "2026-09-26 19:28",
+    "purpose": "Quarterly review",
+    "status": "Attended",
+    "reminder_sent": false
+  },
+  "A002": {
+    "clinic_id": "C001",
+    "patient_id": "22222025",
+    "when": "2026-09-26 21:28",
+    "purpose": "Follow-up consultation",
+    "status": "No-show",
+    "reminder_sent": false
+  },
+  "A003": {
+    "clinic_id": "C001",
+    "patient_id": "11112024",
+    "when": "2026-08-28 15:28",
+    "purpose": "Blood test - fasting",
+    "status": "Scheduled",
+    "reminder_sent": false
+  }
+}

@@ -50,7 +50,6 @@ st.caption(
 overview, network, geography, reliability, search = st.tabs(
     ["Overview", "Network", "Geography", "Reliability", "Search"]
 )
-)
 
 # ---------------------------------------------------------------- Overview
 with overview:
@@ -236,46 +235,46 @@ with geography:
     st.plotly_chart(fig, use_container_width=True)
     st.subheader("Grid Expansion by Commissioning Year")
 
-animation_df = substations.copy()
-animation_df["Commissioning Year"] = pd.to_numeric(
-    animation_df["Commissioning Year"],
-    errors="coerce"
-)
-animation_df = animation_df.dropna(subset=["Commissioning Year"])
-animation_df["Commissioning Year"] = animation_df["Commissioning Year"].astype(int)
-animation_df = animation_df.sort_values("Commissioning Year")
+    animation_df = substations.copy()
+    animation_df["Commissioning Year"] = pd.to_numeric(
+        animation_df["Commissioning Year"],
+        errors="coerce"
+    )
+    animation_df = animation_df.dropna(subset=["Commissioning Year"])
+    animation_df["Commissioning Year"] = animation_df["Commissioning Year"].astype(int)
+    animation_df = animation_df.sort_values("Commissioning Year")
 
-animated_fig = px.scatter_map(
-    animation_df,
-    lat="Latitude",
-    lon="Longitude",
-    size="Capacity (MVA)",
-    color="Voltage (kV)",
-    animation_frame="Commissioning Year",
-    hover_name="Name",
-    hover_data={
-        "Region": True,
-        "Country": True,
-        "Status": True,
-        "Capacity (MVA)": True,
-        "Commissioning Year": True,
-        "Latitude": False,
-        "Longitude": False
-    },
-    zoom=5.3,
-    height=600,
-    map_style="carto-positron"
-)
+    animated_fig = px.scatter_map(
+        animation_df,
+        lat="Latitude",
+        lon="Longitude",
+        size="Capacity (MVA)",
+        color="Voltage (kV)",
+        animation_frame="Commissioning Year",
+        hover_name="Name",
+        hover_data={
+            "Region": True,
+            "Country": True,
+            "Status": True,
+            "Capacity (MVA)": True,
+            "Commissioning Year": True,
+            "Latitude": False,
+            "Longitude": False
+        },
+        zoom=5.3,
+        height=600,
+        map_style="carto-positron"
+    )
 
-animated_fig.update_layout(
-    title="Substation Development Over Time",
-    margin=dict(l=10, r=10, t=50, b=10)
-)
+    animated_fig.update_layout(
+        title="Substation Development Over Time",
+        margin=dict(l=10, r=10, t=50, b=10)
+    )
 
-st.plotly_chart(
-    animated_fig,
-    use_container_width=True
-)
+    st.plotly_chart(
+        animated_fig,
+        use_container_width=True
+    )
 
     st.subheader("Line lengths")
     st.plotly_chart(
