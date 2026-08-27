@@ -34,7 +34,7 @@ class ReportsTab(ttk.Frame):
 
         self.load()
 
-      def load(self):
+    def load(self):
         summary = services.report_summary(self.conn, self.user)
 
         for child in self.stats.winfo_children():

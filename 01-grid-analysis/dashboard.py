@@ -403,14 +403,14 @@ with geography:
 
     st.subheader("Grid Expansion by Commissioning Year")
 
-animation_df = substations.copy()
-animation_df["Commissioning Year"] = pd.to_numeric(
-    animation_df["Commissioning Year"],
-    errors="coerce"
-)
-animation_df = animation_df.dropna(subset=["Commissioning Year"])
-animation_df["Commissioning Year"] = animation_df["Commissioning Year"].astype(int)
-animation_df = animation_df.sort_values("Commissioning Year")
+    animation_df = substations.copy()
+    animation_df["Commissioning Year"] = pd.to_numeric(
+        animation_df["Commissioning Year"],
+        errors="coerce"
+    )
+    animation_df = animation_df.dropna(subset=["Commissioning Year"])
+    animation_df["Commissioning Year"] = animation_df["Commissioning Year"].astype(int)
+    animation_df = animation_df.sort_values("Commissioning Year")
 
     animated_fig = px.scatter_map(
         animation_df,
@@ -434,15 +434,15 @@ animation_df = animation_df.sort_values("Commissioning Year")
         map_style="carto-positron"
     )
 
-animated_fig.update_layout(
-    title="Substation Development Over Time",
-    margin=dict(l=10, r=10, t=50, b=10)
-)
+    animated_fig.update_layout(
+        title="Substation Development Over Time",
+        margin=dict(l=10, r=10, t=50, b=10)
+    )
 
-st.plotly_chart(
-    animated_fig,
-    use_container_width=True
-)
+    st.plotly_chart(
+        animated_fig,
+        use_container_width=True
+    )
 
     st.subheader("Line lengths")
 
