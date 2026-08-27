@@ -132,6 +132,93 @@ with network:
         st.dataframe(metrics.head(15), use_container_width=True)
     else:
         st.info("Run notebook 04 to generate network_metrics.csv")
+    
+    st.subheader("3D Network Visualisation")
+
+    G3 = griddata.build_graph(data)
+
+    nodes_3d = list(G3.nodes())
+
+    x_3d = [G3.nodes[n]["lon"] for n in nodes_3d]
+    y_3d = [G3.nodes[n]["lat"] for n in nodes_3d]
+    z_3d = [G3.nodes[n]["capacity"] for n in nodes_3d]
+
+    edge_x_3d = []
+    edge_y_3d = []
+    edge_z_3d = []
+
+    for a, b in G3.edges():
+        edge_x_3d.extend([
+            G3.nodes[a]["lon"],
+            G3.nodes[b]["lon"],
+            None
+        ])
+        edge_y_3d.extend([
+            G3.nodes[a]["lat"],
+            G3.nodes[b]["lat"],
+            None
+        ])
+        edge_z_3d.extend([
+            G3.nodes[a]["capacity"],
+            G3.nodes[b]["capacity"],
+            None
+        ])
+
+    edge_trace_3d = go.Scatter3d(
+        x=edge_x_3d,
+        y=edge_y_3d,
+        z=edge_z_3d,
+        mode="lines",
+        line=dict(width=2, color="#999999"),
+        hoverinfo="none"
+    )
+
+    degree_3d = dict(G3.degree())
+
+    node_trace_3d = go.Scatter3d(
+        x=x_3d,
+        y=y_3d,
+        z=z_3d,
+        mode="markers",
+        marker=dict(
+            size=[5 + degree_3d[n] for n in nodes_3d],
+            color=z_3d,
+            colorscale="Blues",
+            showscale=True,
+            colorbar=dict(title="Capacity (MVA)")
+        ),
+        text=[
+            f"{n}<br>"
+            f"Degree: {degree_3d[n]}<br>"
+            f"Voltage: {G3.nodes[n]['voltage']} kV<br>"
+            f"Capacity: {G3.nodes[n]['capacity']} MVA<br>"
+            f"Region: {G3.nodes[n]['region']}"
+            for n in nodes_3d
+        ],
+        hoverinfo="text"
+    )
+
+    fig_3d = go.Figure(
+        data=[edge_trace_3d, node_trace_3d]
+    )
+
+    fig_3d.update_layout(
+        title="3D Electricity Grid Network",
+        scene=dict(
+            xaxis_title="Longitude",
+            yaxis_title="Latitude",
+            zaxis_title="Capacity (MVA)"
+        ),
+        height=700,
+        margin=dict(l=0, r=0, t=50, b=0),
+        showlegend=False
+    )
+
+    st.plotly_chart(
+        fig_3d,
+        use_container_width=True
+    )
+    
 
 # ---------------------------------------------------------------- Geography
 with geography:
