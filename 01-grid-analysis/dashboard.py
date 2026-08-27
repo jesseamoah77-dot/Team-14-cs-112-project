@@ -50,43 +50,73 @@ st.caption(
 overview, network, geography, reliability, search = st.tabs(
     ["Overview", "Network", "Geography", "Reliability", "Search"]
 )
-)
 
-# ---------------------------------------------------------------- Overview
 with overview:
     left, mid1, mid2, right = st.columns(4)
     left.metric("Substations", len(substations))
     mid1.metric("Lines", len(lines))
     mid2.metric("Regions", substations["Region"].nunique())
-    right.metric("Total capacity (MVA)", f"{substations['Capacity (MVA)'].sum():,.0f}")
+    right.metric(
+        "Total capacity (MVA)",
+        f"{substations['Capacity (MVA)'].sum():,.0f}"
+    )
 
     st.subheader("Substations by region")
     region_counts = substations["Region"].value_counts().reset_index()
     region_counts.columns = ["Region", "Substations"]
+
     st.plotly_chart(
-        px.bar(region_counts, x="Substations", y="Region", orientation="h",
-               color_discrete_sequence=["#2b6cb0"]),
+        px.bar(
+            region_counts,
+            x="Substations",
+            y="Region",
+            orientation="h",
+            color_discrete_sequence=["#2b6cb0"]
+        ),
         use_container_width=True,
     )
 
     col_a, col_b = st.columns(2)
+
     with col_a:
         st.subheader("Voltage levels")
-        v = substations["Voltage (kV)"].value_counts().sort_index().reset_index()
+
+        v = (
+            substations["Voltage (kV)"]
+            .value_counts()
+            .sort_index()
+            .reset_index()
+        )
+
         v.columns = ["Voltage (kV)", "Substations"]
         v["Voltage (kV)"] = v["Voltage (kV)"].astype(str) + " kV"
-        st.plotly_chart(px.bar(v, x="Voltage (kV)", y="Substations",
-                               color_discrete_sequence=["#2b6cb0"]),
-                        use_container_width=True)
+
+        st.plotly_chart(
+            px.bar(
+                v,
+                x="Voltage (kV)",
+                y="Substations",
+                color_discrete_sequence=["#2b6cb0"]
+            ),
+            use_container_width=True
+        )
+
     with col_b:
         st.subheader("Lines per utility")
+
         u = master["Code"].value_counts().reset_index()
         u.columns = ["Utility", "Lines"]
-        st.plotly_chart(px.bar(u, x="Utility", y="Lines",
-                               color_discrete_sequence=["#2b6cb0"]),
-                        use_container_width=True)
 
-# ---------------------------------------------------------------- Network
+        st.plotly_chart(
+            px.bar(
+                u,
+                x="Utility",
+                y="Lines",
+                color_discrete_sequence=["#2b6cb0"]
+            ),
+            use_container_width=True
+        )
+
 with network:
     st.subheader("The grid as a graph")
 
@@ -94,16 +124,32 @@ with network:
     chosen = st.selectbox("Filter to region", regions)
 
     G = griddata.build_graph(data)
+
     if chosen != "All":
-        keep = [n for n, d in G.nodes(data=True) if d["region"] == chosen]
+        keep = [
+            n
+            for n, d in G.nodes(data=True)
+            if d["region"] == chosen
+        ]
         G = G.subgraph(keep)
 
     edge_x, edge_y = [], []
+
     for a, b in G.edges():
-        edge_x += [G.nodes[a]["lon"], G.nodes[b]["lon"], None]
-        edge_y += [G.nodes[a]["lat"], G.nodes[b]["lat"], None]
+        edge_x += [
+            G.nodes[a]["lon"],
+            G.nodes[b]["lon"],
+            None
+        ]
+
+        edge_y += [
+            G.nodes[a]["lat"],
+            G.nodes[b]["lat"],
+            None
+        ]
 
     degree = dict(G.degree())
+
     node_trace = go.Scatter(
         x=[G.nodes[n]["lon"] for n in G.nodes],
         y=[G.nodes[n]["lat"] for n in G.nodes],
@@ -111,37 +157,75 @@ with network:
         marker=dict(
             size=[8 + 4 * degree[n] for n in G.nodes],
             color=[degree[n] for n in G.nodes],
-            colorscale="Blues", showscale=True,
-            colorbar=dict(title="Degree"), line=dict(width=1, color="#333"),
+            colorscale="Blues",
+            showscale=True,
+            colorbar=dict(title="Degree"),
+            line=dict(width=1, color="#333"),
         ),
-        text=[f"{n}<br>degree {degree[n]}<br>{G.nodes[n]['voltage']} kV, "
-              f"{G.nodes[n]['capacity']} MVA" for n in G.nodes],
+        text=[
+            f"{n}<br>"
+            f"degree {degree[n]}<br>"
+            f"{G.nodes[n]['voltage']} kV, "
+            f"{G.nodes[n]['capacity']} MVA"
+            for n in G.nodes
+        ],
         hoverinfo="text",
     )
-    fig = go.Figure([
-        go.Scatter(x=edge_x, y=edge_y, mode="lines",
-                   line=dict(width=0.7, color="#aaa"), hoverinfo="none"),
-        node_trace,
-    ])
-    fig.update_layout(showlegend=False, height=560, margin=dict(l=10, r=10, t=10, b=10),
-                      xaxis_title="Longitude", yaxis_title="Latitude")
+
+    fig = go.Figure(
+        [
+            go.Scatter(
+                x=edge_x,
+                y=edge_y,
+                mode="lines",
+                line=dict(width=0.7, color="#aaa"),
+                hoverinfo="none"
+            ),
+            node_trace,
+        ]
+    )
+
+    fig.update_layout(
+        showlegend=False,
+        height=560,
+        margin=dict(l=10, r=10, t=10, b=10),
+        xaxis_title="Longitude",
+        yaxis_title="Latitude"
+    )
+
     st.plotly_chart(fig, use_container_width=True)
 
     if metrics is not None:
         st.subheader("Centrality rankings (main component)")
-        st.dataframe(metrics.head(15), use_container_width=True)
+        st.dataframe(
+            metrics.head(15),
+            use_container_width=True
+        )
     else:
-        st.info("Run notebook 04 to generate network_metrics.csv")
-    
+        st.info(
+            "Run notebook 04 to generate network_metrics.csv"
+        )
+
     st.subheader("3D Network Visualisation")
 
     G3 = griddata.build_graph(data)
 
     nodes_3d = list(G3.nodes())
 
-    x_3d = [G3.nodes[n]["lon"] for n in nodes_3d]
-    y_3d = [G3.nodes[n]["lat"] for n in nodes_3d]
-    z_3d = [G3.nodes[n]["capacity"] for n in nodes_3d]
+    x_3d = [
+        G3.nodes[n]["lon"]
+        for n in nodes_3d
+    ]
+
+    y_3d = [
+        G3.nodes[n]["lat"]
+        for n in nodes_3d
+    ]
+
+    z_3d = [
+        G3.nodes[n]["capacity"]
+        for n in nodes_3d
+    ]
 
     edge_x_3d = []
     edge_y_3d = []
@@ -153,11 +237,13 @@ with network:
             G3.nodes[b]["lon"],
             None
         ])
+
         edge_y_3d.extend([
             G3.nodes[a]["lat"],
             G3.nodes[b]["lat"],
             None
         ])
+
         edge_z_3d.extend([
             G3.nodes[a]["capacity"],
             G3.nodes[b]["capacity"],
@@ -169,7 +255,10 @@ with network:
         y=edge_y_3d,
         z=edge_z_3d,
         mode="lines",
-        line=dict(width=2, color="#999999"),
+        line=dict(
+            width=2,
+            color="#999999"
+        ),
         hoverinfo="none"
     )
 
@@ -181,11 +270,16 @@ with network:
         z=z_3d,
         mode="markers",
         marker=dict(
-            size=[5 + degree_3d[n] for n in nodes_3d],
+            size=[
+                5 + degree_3d[n]
+                for n in nodes_3d
+            ],
             color=z_3d,
             colorscale="Blues",
             showscale=True,
-            colorbar=dict(title="Capacity (MVA)")
+            colorbar=dict(
+                title="Capacity (MVA)"
+            )
         ),
         text=[
             f"{n}<br>"
@@ -199,7 +293,10 @@ with network:
     )
 
     fig_3d = go.Figure(
-        data=[edge_trace_3d, node_trace_3d]
+        data=[
+            edge_trace_3d,
+            node_trace_3d
+        ]
     )
 
     fig_3d.update_layout(
@@ -210,7 +307,12 @@ with network:
             zaxis_title="Capacity (MVA)"
         ),
         height=700,
-        margin=dict(l=0, r=0, t=50, b=0),
+        margin=dict(
+            l=0,
+            r=0,
+            t=50,
+            b=0
+        ),
         showlegend=False
     )
 
@@ -218,106 +320,193 @@ with network:
         fig_3d,
         use_container_width=True
     )
-    
 
-# ---------------------------------------------------------------- Geography
 with geography:
     st.subheader("Substation map")
-    st.caption("Marker size = capacity. The full layered map with lines is in outputs/grid_map.html (notebook 05).")
 
-    map_df = substations.rename(columns={"Latitude": "lat", "Longitude": "lon"})
-    fig = px.scatter_map(
-        map_df, lat="lat", lon="lon",
-        size="Capacity (MVA)", color="Voltage (kV)",
-        hover_name="Name",
-        hover_data={"Region": True, "Status": True, "lat": False, "lon": False},
-        zoom=5.3, height=560, map_style="carto-positron",
+    st.caption(
+        "Marker size = capacity. The full layered map with lines is in "
+        "outputs/grid_map.html (notebook 05)."
     )
-    st.plotly_chart(fig, use_container_width=True)
+
+    map_df = substations.rename(
+        columns={
+            "Latitude": "lat",
+            "Longitude": "lon"
+        }
+    )
+
+    fig = px.scatter_map(
+        map_df,
+        lat="lat",
+        lon="lon",
+        size="Capacity (MVA)",
+        color="Voltage (kV)",
+        hover_name="Name",
+        hover_data={
+            "Region": True,
+            "Status": True,
+            "lat": False,
+            "lon": False
+        },
+        zoom=5.3,
+        height=560,
+        map_style="carto-positron",
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
     st.subheader("Grid Expansion by Commissioning Year")
 
-animation_df = substations.copy()
-animation_df["Commissioning Year"] = pd.to_numeric(
-    animation_df["Commissioning Year"],
-    errors="coerce"
-)
-animation_df = animation_df.dropna(subset=["Commissioning Year"])
-animation_df["Commissioning Year"] = animation_df["Commissioning Year"].astype(int)
-animation_df = animation_df.sort_values("Commissioning Year")
+    animation_df = substations.copy()
 
-animated_fig = px.scatter_map(
-    animation_df,
-    lat="Latitude",
-    lon="Longitude",
-    size="Capacity (MVA)",
-    color="Voltage (kV)",
-    animation_frame="Commissioning Year",
-    hover_name="Name",
-    hover_data={
-        "Region": True,
-        "Country": True,
-        "Status": True,
-        "Capacity (MVA)": True,
-        "Commissioning Year": True,
-        "Latitude": False,
-        "Longitude": False
-    },
-    zoom=5.3,
-    height=600,
-    map_style="carto-positron"
-)
+    animation_df["Commissioning Year"] = pd.to_numeric(
+        animation_df["Commissioning Year"],
+        errors="coerce"
+    )
 
-animated_fig.update_layout(
-    title="Substation Development Over Time",
-    margin=dict(l=10, r=10, t=50, b=10)
-)
+    animation_df = animation_df.dropna(
+        subset=["Commissioning Year"]
+    )
 
-st.plotly_chart(
-    animated_fig,
-    use_container_width=True
-)
+    animation_df["Commissioning Year"] = animation_df[
+        "Commissioning Year"
+    ].astype(int)
+
+    animation_df = animation_df.sort_values(
+        "Commissioning Year"
+    )
+
+    animated_fig = px.scatter_map(
+        animation_df,
+        lat="Latitude",
+        lon="Longitude",
+        size="Capacity (MVA)",
+        color="Voltage (kV)",
+        animation_frame="Commissioning Year",
+        hover_name="Name",
+        hover_data={
+            "Region": True,
+            "Country": True,
+            "Status": True,
+            "Capacity (MVA)": True,
+            "Commissioning Year": True,
+            "Latitude": False,
+            "Longitude": False
+        },
+        zoom=5.3,
+        height=600,
+        map_style="carto-positron"
+    )
+
+    animated_fig.update_layout(
+        title="Substation Development Over Time",
+        margin=dict(
+            l=10,
+            r=10,
+            t=50,
+            b=10
+        )
+    )
+
+    st.plotly_chart(
+        animated_fig,
+        use_container_width=True
+    )
 
     st.subheader("Line lengths")
+
     st.plotly_chart(
-        px.box(master, x="Voltage (kV)", y="Length (km)", color_discrete_sequence=["#2b6cb0"]),
+        px.box(
+            master,
+            x="Voltage (kV)",
+            y="Length (km)",
+            color_discrete_sequence=["#2b6cb0"]
+        ),
         use_container_width=True,
     )
 
-# ---------------------------------------------------------------- Reliability
 with reliability:
-    st.subheader("N-1 contingency: what breaks if one substation is lost?")
+    st.subheader(
+        "N-1 contingency: what breaks if one substation is lost?"
+    )
+
     if n1 is not None:
-        worst = n1.sort_values("Nodes cut off", ascending=False).head(12)
+        worst = n1.sort_values(
+            "Nodes cut off",
+            ascending=False
+        ).head(12)
+
         st.plotly_chart(
-            px.bar(worst, x="Nodes cut off", y="Removed", orientation="h",
-                   color="Nodes cut off", color_continuous_scale="Reds")
-            .update_layout(yaxis=dict(autorange="reversed")),
+            px.bar(
+                worst,
+                x="Nodes cut off",
+                y="Removed",
+                orientation="h",
+                color="Nodes cut off",
+                color_continuous_scale="Reds"
+            ).update_layout(
+                yaxis=dict(
+                    autorange="reversed"
+                )
+            ),
             use_container_width=True,
         )
+
         st.caption(
             "Removing Cape Coast strands half the network; removing Mallam — same degree — "
             "strands nobody. Redundancy, not connection count, is what protects the grid."
         )
+
     else:
-        st.info("Run notebook 04 to generate n1_contingency.csv")
+        st.info(
+            "Run notebook 04 to generate n1_contingency.csv"
+        )
 
     st.subheader("Assets needing attention")
+
     col_a, col_b = st.columns(2)
+
     with col_a:
         st.write("**Lines under maintenance**")
+
         st.dataframe(
-            master.loc[master["Status"] == "Under Maintenance",
-                       ["Source Substation", "Destination Substation", "Region_src", "Voltage (kV)"]],
-            use_container_width=True, hide_index=True,
+            master.loc[
+                master["Status"] == "Under Maintenance",
+                [
+                    "Source Substation",
+                    "Destination Substation",
+                    "Region_src",
+                    "Voltage (kV)"
+                ]
+            ],
+            use_container_width=True,
+            hide_index=True,
         )
+
     with col_b:
         st.write("**Oldest substations (top 8)**")
+
         st.dataframe(
-            substations.nsmallest(8, "Commissioning Year")[
-                ["Short Name", "Region", "Commissioning Year", "Capacity (MVA)", "Status"]],
-            use_container_width=True, hide_index=True,
+            substations.nsmallest(
+                8,
+                "Commissioning Year"
+            )[
+                [
+                    "Short Name",
+                    "Region",
+                    "Commissioning Year",
+                    "Capacity (MVA)",
+                    "Status"
+                ]
+            ],
+            use_container_width=True,
+            hide_index=True,
         )
-# ---------------------------------------------------------------- Search
+
 with search:
     st.subheader("Substation Finder")
 
@@ -328,9 +517,16 @@ with search:
     c1, c2, c3 = st.columns(3)
 
     with c1:
-        search_regions = ["All"] + sorted(
-            substations["Region"].dropna().astype(str).unique().tolist()
+        search_regions = [
+            "All"
+        ] + sorted(
+            substations["Region"]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
         )
+
         selected_region = st.selectbox(
             "Region",
             search_regions,
@@ -338,9 +534,15 @@ with search:
         )
 
     with c2:
-        search_voltages = ["All"] + sorted(
-            substations["Voltage (kV)"].dropna().unique().tolist()
+        search_voltages = [
+            "All"
+        ] + sorted(
+            substations["Voltage (kV)"]
+            .dropna()
+            .unique()
+            .tolist()
         )
+
         selected_voltage = st.selectbox(
             "Voltage (kV)",
             search_voltages,
@@ -348,9 +550,16 @@ with search:
         )
 
     with c3:
-        search_statuses = ["All"] + sorted(
-            substations["Status"].dropna().astype(str).unique().tolist()
+        search_statuses = [
+            "All"
+        ] + sorted(
+            substations["Status"]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
         )
+
         selected_status = st.selectbox(
             "Status",
             search_statuses,
@@ -361,30 +570,44 @@ with search:
 
     if search_term:
         term = search_term.strip().lower()
+
         results = results[
-            results["Name"].astype(str).str.lower().str.contains(term, na=False)
+            results["Name"]
+            .astype(str)
+            .str.lower()
+            .str.contains(term, na=False)
             |
-            results["Short Name"].astype(str).str.lower().str.contains(term, na=False)
+            results["Short Name"]
+            .astype(str)
+            .str.lower()
+            .str.contains(term, na=False)
             |
-            results["Substation ID"].astype(str).str.contains(term, na=False)
+            results["Substation ID"]
+            .astype(str)
+            .str.contains(term, na=False)
         ]
 
     if selected_region != "All":
         results = results[
-            results["Region"].astype(str) == selected_region
+            results["Region"].astype(str)
+            == selected_region
         ]
 
     if selected_voltage != "All":
         results = results[
-            results["Voltage (kV)"] == selected_voltage
+            results["Voltage (kV)"]
+            == selected_voltage
         ]
 
     if selected_status != "All":
         results = results[
-            results["Status"].astype(str) == selected_status
+            results["Status"].astype(str)
+            == selected_status
         ]
 
-    st.write(f"Results found: {len(results)}")
+    st.write(
+        f"Results found: {len(results)}"
+    )
 
     display_columns = [
         "Substation ID",
@@ -447,7 +670,11 @@ with search:
     st.subheader("Utility Comparison")
 
     utility_names = sorted(
-        utilities["Name"].dropna().astype(str).unique().tolist()
+        utilities["Name"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
     )
 
     if len(utility_names) >= 2:
@@ -487,31 +714,43 @@ with search:
         ]
 
         connected_a = set(
-            lines_a["Source Substation ID"].dropna().tolist()
+            lines_a["Source Substation ID"]
+            .dropna()
+            .tolist()
         ) | set(
-            lines_a["Destination Substation ID"].dropna().tolist()
+            lines_a["Destination Substation ID"]
+            .dropna()
+            .tolist()
         )
 
         connected_b = set(
-            lines_b["Source Substation ID"].dropna().tolist()
+            lines_b["Source Substation ID"]
+            .dropna()
+            .tolist()
         ) | set(
-            lines_b["Destination Substation ID"].dropna().tolist()
+            lines_b["Destination Substation ID"]
+            .dropna()
+            .tolist()
         )
 
         substations_a = substations[
-            substations["Substation ID"].isin(connected_a)
+            substations["Substation ID"]
+            .isin(connected_a)
         ]
 
         substations_b = substations[
-            substations["Substation ID"].isin(connected_b)
+            substations["Substation ID"]
+            .isin(connected_b)
         ]
 
         maintenance_a = (
-            lines_a["Status"] == "Under Maintenance"
+            lines_a["Status"]
+            == "Under Maintenance"
         ).sum()
 
         maintenance_b = (
-            lines_b["Status"] == "Under Maintenance"
+            lines_b["Status"]
+            == "Under Maintenance"
         ).sum()
 
         comparison = pd.DataFrame({
@@ -525,15 +764,27 @@ with search:
             utility_a: [
                 len(lines_a),
                 len(substations_a),
-                round(lines_a["Length (km)"].sum(), 2),
-                round(lines_a["Capacity (MVA)"].mean(), 2),
+                round(
+                    lines_a["Length (km)"].sum(),
+                    2
+                ),
+                round(
+                    lines_a["Capacity (MVA)"].mean(),
+                    2
+                ),
                 int(maintenance_a)
             ],
             utility_b: [
                 len(lines_b),
                 len(substations_b),
-                round(lines_b["Length (km)"].sum(), 2),
-                round(lines_b["Capacity (MVA)"].mean(), 2),
+                round(
+                    lines_b["Length (km)"].sum(),
+                    2
+                ),
+                round(
+                    lines_b["Capacity (MVA)"].mean(),
+                    2
+                ),
                 int(maintenance_b)
             ]
         })
@@ -545,8 +796,14 @@ with search:
         )
 
         chart_data = pd.DataFrame({
-            "Utility": [utility_a, utility_b],
-            "Lines Operated": [len(lines_a), len(lines_b)],
+            "Utility": [
+                utility_a,
+                utility_b
+            ],
+            "Lines Operated": [
+                len(lines_a),
+                len(lines_b)
+            ],
             "Substations Connected": [
                 len(substations_a),
                 len(substations_b)
@@ -573,6 +830,7 @@ with search:
             comparison_fig,
             use_container_width=True
         )
+
     else:
         st.warning(
             "At least two utilities are required for comparison."
