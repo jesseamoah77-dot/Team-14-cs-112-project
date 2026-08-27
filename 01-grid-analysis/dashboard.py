@@ -403,24 +403,14 @@ with geography:
 
     st.subheader("Grid Expansion by Commissioning Year")
 
-    animation_df = substations.copy()
-
-    animation_df["Commissioning Year"] = pd.to_numeric(
-        animation_df["Commissioning Year"],
-        errors="coerce"
-    )
-
-    animation_df = animation_df.dropna(
-        subset=["Commissioning Year"]
-    )
-
-    animation_df["Commissioning Year"] = animation_df[
-        "Commissioning Year"
-    ].astype(int)
-
-    animation_df = animation_df.sort_values(
-        "Commissioning Year"
-    )
+animation_df = substations.copy()
+animation_df["Commissioning Year"] = pd.to_numeric(
+    animation_df["Commissioning Year"],
+    errors="coerce"
+)
+animation_df = animation_df.dropna(subset=["Commissioning Year"])
+animation_df["Commissioning Year"] = animation_df["Commissioning Year"].astype(int)
+animation_df = animation_df.sort_values("Commissioning Year")
 
     animated_fig = px.scatter_map(
         animation_df,
@@ -444,234 +434,15 @@ with geography:
         map_style="carto-positron"
     )
 
-    animated_fig.update_layout(
-        title="Substation Development Over Time",
-        margin=dict(
-            l=10,
-            r=10,
-            t=50,
-            b=10
-        )
-    )
+animated_fig.update_layout(
+    title="Substation Development Over Time",
+    margin=dict(l=10, r=10, t=50, b=10)
+)
 
-    st.plotly_chart(
-        animated_fig,
-        use_container_width=True
-    )
-
-    st.subheader("Regional Connectivity Chord")
-
-    connectivity = lines[
-        [
-            "Source Substation ID",
-            "Destination Substation ID"
-        ]
-    ].copy()
-
-    source_regions = substations[
-        ["Substation ID", "Region"]
-    ].rename(
-        columns={
-            "Substation ID": "Source Substation ID",
-            "Region": "Source Region"
-        }
-    )
-
-    destination_regions = substations[
-        ["Substation ID", "Region"]
-    ].rename(
-        columns={
-            "Substation ID": "Destination Substation ID",
-            "Region": "Destination Region"
-        }
-    )
-
-    connectivity = connectivity.merge(
-        source_regions,
-        on="Source Substation ID",
-        how="left"
-    )
-
-    connectivity = connectivity.merge(
-        destination_regions,
-        on="Destination Substation ID",
-        how="left"
-    )
-
-    connectivity = connectivity.dropna(
-        subset=[
-            "Source Region",
-            "Destination Region"
-        ]
-    )
-
-    connectivity = connectivity[
-        connectivity["Source Region"]
-        != connectivity["Destination Region"]
-    ]
-
-    regional_links = (
-        connectivity.groupby(
-            ["Source Region", "Destination Region"]
-        )
-        .size()
-        .reset_index(name="Connections")
-    )
-
-    if not regional_links.empty:
-        region_names = sorted(
-            set(
-                regional_links["Source Region"]
-            )
-            |
-            set(
-                regional_links["Destination Region"]
-            )
-        )
-
-        import math
-
-        angles = {
-            region: (
-                2 * math.pi * i / len(region_names)
-            )
-            for i, region in enumerate(region_names)
-        }
-
-        radius = 1.0
-
-        node_x = [
-            radius * math.cos(angles[region])
-            for region in region_names
-        ]
-
-        node_y = [
-            radius * math.sin(angles[region])
-            for region in region_names
-        ]
-
-        chord_traces = []
-
-        max_connections = regional_links[
-            "Connections"
-        ].max()
-
-        for _, row in regional_links.iterrows():
-            source = row["Source Region"]
-            destination = row["Destination Region"]
-            connections = row["Connections"]
-
-            theta1 = angles[source]
-            theta2 = angles[destination]
-
-            x1 = radius * math.cos(theta1)
-            y1 = radius * math.sin(theta1)
-
-            x2 = radius * math.cos(theta2)
-            y2 = radius * math.sin(theta2)
-
-            control_x = 0
-            control_y = 0
-
-            curve_x = []
-            curve_y = []
-
-            for t in [
-                i / 30
-                for i in range(31)
-            ]:
-                x = (
-                    (1 - t) ** 2 * x1
-                    + 2 * (1 - t) * t * control_x
-                    + t ** 2 * x2
-                )
-
-                y = (
-                    (1 - t) ** 2 * y1
-                    + 2 * (1 - t) * t * control_y
-                    + t ** 2 * y2
-                )
-
-                curve_x.append(x)
-                curve_y.append(y)
-
-            width = max(
-                1,
-                2 + 8 * connections / max_connections
-            )
-
-            chord_traces.append(
-                go.Scatter(
-                    x=curve_x,
-                    y=curve_y,
-                    mode="lines",
-                    line=dict(
-                        width=width,
-                        color="#7b61a8"
-                    ),
-                    hovertemplate=(
-                        f"{source} → {destination}"
-                        f"<br>Connections: {connections}"
-                        "<extra></extra>"
-                    ),
-                    showlegend=False
-                )
-            )
-
-        node_trace = go.Scatter(
-            x=node_x,
-            y=node_y,
-            mode="markers+text",
-            text=region_names,
-            textposition="top center",
-            marker=dict(
-                size=16,
-                color="#2b6cb0",
-                line=dict(
-                    width=1,
-                    color="#333333"
-                )
-            ),
-            hovertemplate=(
-                "%{text}<extra></extra>"
-            ),
-            showlegend=False
-        )
-
-        chord_fig = go.Figure(
-            data=chord_traces + [node_trace]
-        )
-
-        chord_fig.update_layout(
-            title="Inter-Regional Grid Connectivity",
-            height=700,
-            showlegend=False,
-            xaxis=dict(
-                visible=False,
-                range=[-1.25, 1.25]
-            ),
-            yaxis=dict(
-                visible=False,
-                range=[-1.25, 1.25],
-                scaleanchor="x",
-                scaleratio=1
-            ),
-            margin=dict(
-                l=20,
-                r=20,
-                t=60,
-                b=20
-            )
-        )
-
-        st.plotly_chart(
-            chord_fig,
-            use_container_width=True
-        )
-    else:
-        st.info(
-            "No cross-regional connections are available."
-        )
+st.plotly_chart(
+    animated_fig,
+    use_container_width=True
+)
 
     st.subheader("Line lengths")
 

@@ -1,0 +1,42 @@
+{
+  "M001": {
+    "sender_id": "SYSTEM",
+    "recipient_id": "11112024",
+    "content": "Submission reviewed - Reviewed - Normal: Weekly blood-pressure log",
+    "timestamp": "2026-08-27 19:28:16",
+    "read": false,
+    "kind": "notification"
+  },
+  "M002": {
+    "sender_id": "SYSTEM",
+    "recipient_id": "12350000",
+    "content": "New submission from Abena Osei for 'Updated contact details form' (22222025_T002).",
+    "timestamp": "2026-08-27 19:28:16",
+    "read": false,
+    "kind": "notification"
+  },
+  "M003": {
+    "sender_id": "11112024",
+    "recipient_id": "12350000",
+    "content": "Good afternoon Doctor - can my next appointment move to a morning slot?",
+    "timestamp": "2026-08-27 19:28:16",
+    "read": true,
+    "kind": "message"
+  },
+  "M004": {
+    "sender_id": "12350000",
+    "recipient_id": "11112024",
+    "content": "Morning of the 12th works - I'll update the booking today.",
+    "timestamp": "2026-08-27 19:28:16",
+    "read": false,
+    "kind": "message"
+  },
+  "M005": {
+    "sender_id": "12350000",
+    "recipient_id": "11112024",
+    "content": "hi",
+    "timestamp": "2026-08-27 19:29:49",
+    "read": false,
+    "kind": "message"
+  }
+}

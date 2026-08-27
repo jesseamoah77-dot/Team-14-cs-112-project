@@ -1,0 +1,43 @@
+{
+  "11112024_T001": {
+    "patient_id": "11112024",
+    "task_id": "T001",
+    "file_path": "C001/11112024/11112024_T001.csv",
+    "submitted_at": "2026-08-27 19:28:16",
+    "resubmission": false,
+    "completeness": {
+      "complete": true,
+      "checked_fields": [
+        "Date",
+        "Systolic"
+      ],
+      "problems": []
+    },
+    "review": {
+      "outcome": "Reviewed - Normal",
+      "reviewer_id": "12350000",
+      "reviewed_at": "2026-08-27 19:28:16",
+      "notes": "All readings recorded - thank you, keep the same schedule.",
+      "patient_notified": true
+    }
+  },
+  "22222025_T002": {
+    "patient_id": "22222025",
+    "task_id": "T002",
+    "file_path": "C001/22222025/22222025_T002.txt",
+    "submitted_at": "2026-08-27 19:28:16",
+    "resubmission": false,
+    "completeness": {
+      "complete": true,
+      "checked_fields": [],
+      "problems": []
+    },
+    "review": {
+      "outcome": "Pending",
+      "reviewer_id": null,
+      "reviewed_at": null,
+      "notes": null,
+      "patient_notified": false
+    }
+  }
+}

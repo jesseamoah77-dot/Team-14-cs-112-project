@@ -1,0 +1,11 @@
+{
+  "C001": {
+    "name": "Adabraka Family Clinic",
+    "clinician_id": "12350000",
+    "patient_ids": [
+      "11112024",
+      "22222025",
+      "33332026"
+    ]
+  }
+}

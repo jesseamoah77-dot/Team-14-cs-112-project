@@ -28,7 +28,7 @@ def main():
             print("  python seed_demo.py")
         return
     
-    run_app(con) 
+    run_app(conn) 
 
 
 if __name__ == "__main__":
