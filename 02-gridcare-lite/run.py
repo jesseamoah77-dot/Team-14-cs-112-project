@@ -27,8 +27,8 @@ def main():
         if users == 0:
             print("  python seed_demo.py")
         return
-
-    run_app(conn)
+    
+    run_app(con) 
 
 
 if __name__ == "__main__":
