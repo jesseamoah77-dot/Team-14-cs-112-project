@@ -12,7 +12,8 @@ Accounts (username / password / role):
     efua.cs  / service1   / customer_service
 
 Demo credentials for coursework only, obviously - a real deployment would never ship
-predictable passwords.
+predictable passwords. 
+
 
 The sample records include one fully resolved outage (so average resolution time has
 a value), one in progress, and one still open with a linked complaint - enough for
