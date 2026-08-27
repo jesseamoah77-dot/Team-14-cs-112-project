@@ -42,8 +42,6 @@ def dashboard(u):
     )
 
 
-# ---------------------------------------------------------------- health tasks
-
 @bp.route("/tasks/new", methods=["GET", "POST"])
 @clinician_required
 def new_task(u):
@@ -51,7 +49,6 @@ def new_task(u):
     patients = _patients_of(record)
     if request.method == "POST":
         assigned = request.form.getlist("patients")
-        # Assignment is constrained to own patients server-side, whatever the form said.
         assigned = [p for p in assigned if p in record["patient_ids"]]
         fields = [f.strip() for f in request.form.get("expected_fields", "").split(",")]
         try:
@@ -80,8 +77,6 @@ def new_task(u):
                            form={})
 
 
-# ---------------------------------------------------------------- submissions
-
 @bp.get("/submissions")
 @clinician_required
 def submissions(u):
@@ -107,7 +102,6 @@ def submission_detail(u, key):
     task = health_task.get(sub["task_id"])
     patient = user.get(sub["patient_id"])
 
-    # Inline preview for csv/txt; pdf is download-only.
     preview = None
     path = sub["file_path"]
     if path.endswith((".csv", ".txt")):
@@ -139,8 +133,6 @@ def review(u, key):
         flash(str(e), "error")
         return redirect(url_for("clinician.submission_detail", key=key))
 
-    # Notify the patient: in-app always, email alongside. Wording stays
-    # administrative - the outcome category and the clinician's own notes only.
     patient = user.get(sub["patient_id"])
     task = health_task.get(sub["task_id"])
     body = (f"Your submission for '{task['title']}' has been reviewed.\n"
@@ -163,8 +155,6 @@ def download(u, key):
         abort(404)
     return send_file(path, as_attachment=True, download_name=path.name)
 
-
-# ---------------------------------------------------------------- messaging
 
 @bp.route("/messages/<patient_id>", methods=["GET", "POST"])
 @clinician_required
@@ -189,12 +179,9 @@ def thread(u, patient_id):
 @bp.get("/messages/<patient_id>/poll")
 @clinician_required
 def poll(u, patient_id):
-    """Same polling endpoint as the patient side, for the clinician's thread view."""
     own_patient_or_404(u, patient_id)
     return {"count": len(message.conversation(u.user_id, patient_id))}
 
-
-# ---------------------------------------------------------------- announcements
 
 @bp.route("/announcements", methods=["GET", "POST"])
 @clinician_required
@@ -210,7 +197,7 @@ def announcements(u):
         except ValidationError as e:
             flash(str(e), "error")
             return redirect(url_for("clinician.announcements"))
-        # Urgent announcements also go out by email, routine ones stay on-dashboard.
+
         if request.form.get("urgent") == "on":
             for patient_id in record["patient_ids"]:
                 patient = user.get(patient_id)
@@ -218,69 +205,127 @@ def announcements(u):
                     email_handler.send_email(
                         patient.email, f"Clinic notice: {request.form.get('title')}",
                         request.form.get("body", ""))
+
         flash("Announcement published.", "success")
         return redirect(url_for("clinician.announcements"))
-    return render_template("clinician/announcements.html", user=u,
-                           announcements=announcement.all_for_clinic(clinic_id))
 
+    return render_template(
+        "clinician/announcements.html",
+        user=u,
+        announcements=announcement.all_for_clinic(clinic_id)
+    )
 
-# ---------------------------------------------------------------- appointments
 
 @bp.route("/appointments", methods=["GET", "POST"])
 @clinician_required
 def appointments(u):
     clinic_id, record = own_clinic_or_403(u)
+
     if request.method == "POST":
         patient_id = request.form.get("patient_id", "")
         own_patient_or_404(u, patient_id)
+
         try:
-            appointment_id = appointment.create(clinic_id, patient_id,
-                                                request.form.get("when"),
-                                                request.form.get("purpose"))
+            appointment_id = appointment.create(
+                clinic_id,
+                patient_id,
+                request.form.get("when"),
+                request.form.get("purpose")
+            )
         except ValidationError as e:
             flash(str(e), "error")
             return redirect(url_for("clinician.appointments"))
-        message.notify(patient_id,
-                       f"New appointment {appointment_id}: "
-                       f"{request.form.get('when')} - {request.form.get('purpose')}")
+
+        message.notify(
+            patient_id,
+            f"New appointment {appointment_id}: "
+            f"{request.form.get('when')} - {request.form.get('purpose')}"
+        )
+
         patient = user.get(patient_id)
+
         if patient:
             email_handler.send_email(
-                patient.email, "New appointment booked",
+                patient.email,
+                "New appointment booked",
                 f"Hello {patient.name},\n\nYou have an appointment on "
-                f"{request.form.get('when')}: {request.form.get('purpose')}.\n")
-        flash("Appointment created and the patient notified.", "success")
-        return redirect(url_for("clinician.appointments"))
-    return render_template("clinician/appointments.html", user=u,
-                           appointments=appointment.for_clinic(clinic_id),
-                           patients=_patients_of(record))
+                f"{request.form.get('when')}: {request.form.get('purpose')}.\n"
+            )
+
+        flash(
+            "Appointment created and the patient notified.",
+            "success"
+        )
+
+        return redirect(
+            url_for("clinician.appointments")
+        )
+
+    return render_template(
+        "clinician/appointments.html",
+        user=u,
+        appointments=appointment.for_clinic(clinic_id),
+        patients=_patients_of(record)
+    )
 
 
 @bp.post("/appointments/<appointment_id>/status")
 @clinician_required
 def appointment_status(u, appointment_id):
     clinic_id, _ = own_clinic_or_403(u)
-    record = appointment.for_clinic(clinic_id).get(appointment_id)
+
+    record = appointment.for_clinic(
+        clinic_id
+    ).get(appointment_id)
+
     if record is None:
         abort(404)
-    status = request.form.get("status", "")
+
+    status = request.form.get(
+        "status",
+        ""
+    )
+
     try:
-        appointment.set_status(appointment_id, status)
+        appointment.set_status(
+            appointment_id,
+            status,
+            clinic_id=clinic_id,
+            user_role=u.role,
+        )
+
     except ValidationError as e:
-        flash(str(e), "error")
-        return redirect(url_for("clinician.appointments"))
+        flash(
+            str(e),
+            "error"
+        )
+
+        return redirect(
+            url_for("clinician.appointments")
+        )
+
     if status == "Attended":
         from utils import engagement
-        engagement.on_attendance(record["patient_id"])
-    flash(f"Appointment marked {status}.", "success")
-    return redirect(url_for("clinician.appointments"))
+        engagement.on_attendance(
+            record["patient_id"]
+        )
 
+    flash(
+        f"Appointment marked {status}.",
+        "success"
+    )
 
-# ---------------------------------------------------------------- analytics
+    return redirect(
+        url_for("clinician.appointments")
+    )
+
 
 @bp.get("/analytics")
 @clinician_required
 def analytics_view(u):
     clinic_id, _ = own_clinic_or_403(u)
-    return render_template("clinician/analytics.html", user=u,
-                           stats=analytics.clinic_summary(clinic_id))
+    return render_template(
+        "clinician/analytics.html",
+        user=u,
+        stats=analytics.clinic_summary(clinic_id)
+    )
