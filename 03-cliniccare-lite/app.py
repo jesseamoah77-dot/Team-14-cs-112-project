@@ -27,11 +27,12 @@ def create_app():
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
+
     from routes import auth, clinician, patient
     app.register_blueprint(auth.bp)
     app.register_blueprint(clinician.bp)
     app.register_blueprint(patient.bp)
-
+    
     @app.context_processor
     def inject_today():
         # Templates compare due/expiry dates against "today" (overdue badges,
