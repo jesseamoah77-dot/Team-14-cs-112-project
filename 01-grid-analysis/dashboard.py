@@ -47,8 +47,9 @@ st.caption(
     "nothing here describes Ghana's actual grid."
 )
 
-overview, network, geography, reliability = st.tabs(
-    ["Overview", "Network", "Geography", "Reliability"]
+overview, network, geography, reliability, search = st.tabs(
+    ["Overview", "Network", "Geography", "Reliability", "Search"]
+)
 )
 
 # ---------------------------------------------------------------- Overview
@@ -186,4 +187,264 @@ with reliability:
             substations.nsmallest(8, "Commissioning Year")[
                 ["Short Name", "Region", "Commissioning Year", "Capacity (MVA)", "Status"]],
             use_container_width=True, hide_index=True,
+        )
+# ---------------------------------------------------------------- Search
+with search:
+    st.subheader("Substation Finder")
+
+    search_term = st.text_input(
+        "Search by substation name, short name, or ID"
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        search_regions = ["All"] + sorted(
+            substations["Region"].dropna().astype(str).unique().tolist()
+        )
+        selected_region = st.selectbox(
+            "Region",
+            search_regions,
+            key="search_region"
+        )
+
+    with c2:
+        search_voltages = ["All"] + sorted(
+            substations["Voltage (kV)"].dropna().unique().tolist()
+        )
+        selected_voltage = st.selectbox(
+            "Voltage (kV)",
+            search_voltages,
+            key="search_voltage"
+        )
+
+    with c3:
+        search_statuses = ["All"] + sorted(
+            substations["Status"].dropna().astype(str).unique().tolist()
+        )
+        selected_status = st.selectbox(
+            "Status",
+            search_statuses,
+            key="search_status"
+        )
+
+    results = substations.copy()
+
+    if search_term:
+        term = search_term.strip().lower()
+        results = results[
+            results["Name"].astype(str).str.lower().str.contains(term, na=False)
+            |
+            results["Short Name"].astype(str).str.lower().str.contains(term, na=False)
+            |
+            results["Substation ID"].astype(str).str.contains(term, na=False)
+        ]
+
+    if selected_region != "All":
+        results = results[
+            results["Region"].astype(str) == selected_region
+        ]
+
+    if selected_voltage != "All":
+        results = results[
+            results["Voltage (kV)"] == selected_voltage
+        ]
+
+    if selected_status != "All":
+        results = results[
+            results["Status"].astype(str) == selected_status
+        ]
+
+    st.write(f"Results found: {len(results)}")
+
+    display_columns = [
+        "Substation ID",
+        "Name",
+        "Short Name",
+        "Region",
+        "Country",
+        "Latitude",
+        "Longitude",
+        "Voltage (kV)",
+        "Capacity (MVA)",
+        "Commissioning Year",
+        "Type",
+        "Status"
+    ]
+
+    st.dataframe(
+        results[display_columns],
+        use_container_width=True,
+        hide_index=True
+    )
+
+    if not results.empty:
+        st.subheader("Substation Details")
+
+        selected_name = st.selectbox(
+            "Select a substation",
+            results["Name"].tolist(),
+            key="selected_substation"
+        )
+
+        selected_row = results[
+            results["Name"] == selected_name
+        ].iloc[0]
+
+        d1, d2, d3, d4 = st.columns(4)
+
+        d1.metric(
+            "Voltage",
+            f"{selected_row['Voltage (kV)']} kV"
+        )
+
+        d2.metric(
+            "Capacity",
+            f"{selected_row['Capacity (MVA)']} MVA"
+        )
+
+        d3.metric(
+            "Region",
+            str(selected_row["Region"])
+        )
+
+        d4.metric(
+            "Status",
+            str(selected_row["Status"])
+        )
+
+    st.divider()
+
+    st.subheader("Utility Comparison")
+
+    utility_names = sorted(
+        utilities["Name"].dropna().astype(str).unique().tolist()
+    )
+
+    if len(utility_names) >= 2:
+        u1, u2 = st.columns(2)
+
+        with u1:
+            utility_a = st.selectbox(
+                "Utility A",
+                utility_names,
+                key="utility_a"
+            )
+
+        with u2:
+            utility_b = st.selectbox(
+                "Utility B",
+                utility_names,
+                index=1,
+                key="utility_b"
+            )
+
+        id_a = utilities.loc[
+            utilities["Name"] == utility_a,
+            "Utility ID"
+        ].iloc[0]
+
+        id_b = utilities.loc[
+            utilities["Name"] == utility_b,
+            "Utility ID"
+        ].iloc[0]
+
+        lines_a = lines[
+            lines["Utility ID"] == id_a
+        ]
+
+        lines_b = lines[
+            lines["Utility ID"] == id_b
+        ]
+
+        connected_a = set(
+            lines_a["Source Substation ID"].dropna().tolist()
+        ) | set(
+            lines_a["Destination Substation ID"].dropna().tolist()
+        )
+
+        connected_b = set(
+            lines_b["Source Substation ID"].dropna().tolist()
+        ) | set(
+            lines_b["Destination Substation ID"].dropna().tolist()
+        )
+
+        substations_a = substations[
+            substations["Substation ID"].isin(connected_a)
+        ]
+
+        substations_b = substations[
+            substations["Substation ID"].isin(connected_b)
+        ]
+
+        maintenance_a = (
+            lines_a["Status"] == "Under Maintenance"
+        ).sum()
+
+        maintenance_b = (
+            lines_b["Status"] == "Under Maintenance"
+        ).sum()
+
+        comparison = pd.DataFrame({
+            "Metric": [
+                "Lines Operated",
+                "Substations Connected",
+                "Total Line Length (km)",
+                "Average Line Capacity (MVA)",
+                "Lines Under Maintenance"
+            ],
+            utility_a: [
+                len(lines_a),
+                len(substations_a),
+                round(lines_a["Length (km)"].sum(), 2),
+                round(lines_a["Capacity (MVA)"].mean(), 2),
+                int(maintenance_a)
+            ],
+            utility_b: [
+                len(lines_b),
+                len(substations_b),
+                round(lines_b["Length (km)"].sum(), 2),
+                round(lines_b["Capacity (MVA)"].mean(), 2),
+                int(maintenance_b)
+            ]
+        })
+
+        st.dataframe(
+            comparison,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        chart_data = pd.DataFrame({
+            "Utility": [utility_a, utility_b],
+            "Lines Operated": [len(lines_a), len(lines_b)],
+            "Substations Connected": [
+                len(substations_a),
+                len(substations_b)
+            ],
+            "Maintenance Lines": [
+                int(maintenance_a),
+                int(maintenance_b)
+            ]
+        })
+
+        comparison_fig = px.bar(
+            chart_data,
+            x="Utility",
+            y=[
+                "Lines Operated",
+                "Substations Connected",
+                "Maintenance Lines"
+            ],
+            barmode="group",
+            title="Utility Infrastructure Comparison"
+        )
+
+        st.plotly_chart(
+            comparison_fig,
+            use_container_width=True
+        )
+    else:
+        st.warning(
+            "At least two utilities are required for comparison."
         )
