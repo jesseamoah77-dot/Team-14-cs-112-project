@@ -8,7 +8,7 @@ Accounts (ID / password):
     12350000 / Cl1nic!pass   clinician - Dr Akosua Sarpong, Adabraka Family Clinic
     11112024 / Pat1ent!aa    patient   - Kojo Mensah
     22222025 / Pat1ent!bb    patient   - Abena Osei
-    33332026 / Pat1ent!cc    patient   - Yaw Owusu
+    33332026 / Pat1ent!cc    patient   - Yaw Owusu 
 
 Coursework demo credentials only. Seeds two tasks, one reviewed submission and one
 awaiting review, a message thread, an urgent announcement, and three appointments
