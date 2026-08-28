@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Appointments - ClinicCare-Lite{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Appointments</h1>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <form method="post" class="card p-4">
+      <h2 class="h6">Book appointment</h2>
+      <div class="mb-3">
+        <label class="form-label" for="patient_id">Patient</label>
+        <select class="form-select" id="patient_id" name="patient_id" required>
+          {% for patient_id, p in patients.items() %}
+            <option value="{{ patient_id }}">{{ p.name }} ({{ patient_id }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="when">Date and time</label>
+        <input class="form-control" id="when" name="when" required
+               placeholder="YYYY-MM-DD HH:MM">
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="purpose">Purpose</label>
+        <input class="form-control" id="purpose" name="purpose" required
+               placeholder="e.g. Quarterly review">
+      </div>
+      <button class="btn btn-primary" type="submit">Book and notify</button>
+    </form>
+  </div>
+  <div class="col-lg-8">
+    <div class="table-responsive card">
+      <table class="table table-sm align-middle mb-0">
+        <thead><tr><th>ID</th><th>Patient</th><th>When</th><th>Purpose</th>
+                   <th>Status</th><th>Mark</th></tr></thead>
+        <tbody>
+        {% for appointment_id, a in appointments.items() %}
+          <tr>
+            <td>{{ appointment_id }}</td>
+            <td>{{ patients[a.patient_id].name if a.patient_id in patients else a.patient_id }}</td>
+            <td>{{ a.when }}</td>
+            <td>{{ a.purpose }}</td>
+            <td><span class="badge outcome-badge" data-outcome="{{ a.status }}">{{ a.status }}</span></td>
+            <td>
+              {% if a.status == 'Scheduled' %}
+              <form method="post" class="d-inline"
+                    action="{{ url_for('clinician.appointment_status', appointment_id=appointment_id) }}">
+                <button class="btn btn-sm btn-outline-success" name="status" value="Attended">Attended</button>
+                <button class="btn btn-sm btn-outline-danger" name="status" value="No-show">No-show</button>
+                <button class="btn btn-sm btn-outline-secondary" name="status" value="Cancelled">Cancel</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="text-body-secondary">No appointments yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="form-text mt-2">
+      Attendance marks feed the no-show analytics and the patient's private
+      engagement record. Reminders go out via
+      <code>python send_reminders.py</code> (see the README).
+    </p>
+  </div>
+</div>
+{% endblock %}

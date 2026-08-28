@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Analytics - ClinicCare-Lite{% endblock %}
+{% block content %}
+<h1 class="h4 mb-1">Operational analytics</h1>
+<p class="text-body-secondary small mb-3">
+  Aggregated clinic operations only - nothing here compares or ranks individual
+  patients.
+</p>
+
+<div class="row g-3 mb-4">
+  {% for label, value in [
+      ("Tasks", stats.tasks_total),
+      ("Assignments expected", stats.assignments_expected),
+      ("Submissions received", stats.submissions_received),
+      ("Completion rate", (stats.completion_rate_pct ~ "%") if stats.completion_rate_pct is not none else "n/a"),
+      ("Pending reviews", stats.pending_reviews),
+      ("Avg review turnaround", (stats.avg_review_turnaround_hours ~ " h") if stats.avg_review_turnaround_hours is not none else "n/a"),
+      ("Overdue assignments", stats.overdue_assignments),
+  ] %}
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="stat-number">{{ value }}</div>
+      <div class="small">{{ label }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <h2 class="h6">No-show rate by week</h2>
+    <div class="table-responsive card">
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Week</th><th>Attended</th><th>No-shows</th><th>No-show rate</th></tr></thead>
+        <tbody>
+        {% for w in stats.no_show_by_week %}
+          <tr><td>{{ w.week }}</td><td>{{ w.attended }}</td><td>{{ w.no_show }}</td>
+              <td>{{ w.no_show_rate }}%</td></tr>
+        {% else %}
+          <tr><td colspan="4" class="text-body-secondary">No attendance data yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <h2 class="h6">Review outcomes</h2>
+    <ul class="list-group">
+      {% for outcome, n in stats.review_outcomes.items() %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ outcome }}</span><strong>{{ n }}</strong></li>
+      {% else %}
+        <li class="list-group-item text-body-secondary">No reviews yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="col-lg-3">
+    <h2 class="h6">Task volume by month</h2>
+    <ul class="list-group">
+      {% for month, n in stats.monthly_task_volume.items() %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ month }}</span><strong>{{ n }}</strong></li>
+      {% else %}
+        <li class="list-group-item text-body-secondary">No tasks yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

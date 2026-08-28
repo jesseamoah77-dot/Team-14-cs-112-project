@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Register - ClinicCare-Lite{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <h1 class="h4 mb-3">Register</h1>
+      <form method="post" action="{{ url_for('auth.register') }}" id="register-form">
+        <div class="mb-3">
+          <label class="form-label">I am a</label>
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="role" id="role-patient"
+                     value="patient" checked>
+              <label class="form-check-label" for="role-patient">Patient</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="role" id="role-clinician"
+                     value="clinician">
+              <label class="form-check-label" for="role-clinician">Clinician</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="user_id">8-digit ID</label>
+          <input class="form-control" id="user_id" name="user_id" inputmode="numeric"
+                 pattern="\d{8}" maxlength="8" required
+                 value="{{ form.user_id if form else '' }}">
+          <div class="form-text" id="id-hint">
+            Patient IDs end in your registration year (2022&ndash;2028), e.g. 12342024.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="name">Full name</label>
+          <input class="form-control" id="name" name="name" required
+                 value="{{ form.name if form else '' }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-control" id="email" name="email" type="email" required
+                 value="{{ form.email if form else '' }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control" id="password" name="password" type="password" required
+                 minlength="8">
+          <div class="form-text">
+            At least 8 characters with an uppercase letter, a lowercase letter, a digit
+            and one of !@#$%^&amp;*.
+          </div>
+          <div class="small" id="password-feedback"></div>
+        </div>
+
+        <div class="mb-3" id="clinic-pick">
+          <label class="form-label" for="clinic_id">Your clinic</label>
+          <select class="form-select" id="clinic_id" name="clinic_id">
+            {% for clinic_id, c in clinics.items() %}
+              <option value="{{ clinic_id }}">{{ c.name }}</option>
+            {% else %}
+              <option value="">(no clinics registered yet - a clinician must register first)</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3 d-none" id="clinic-name">
+          <label class="form-label" for="clinic_name">Clinic name</label>
+          <input class="form-control" id="clinic_name" name="clinic_name"
+                 placeholder="e.g. Adabraka Family Clinic">
+          <div class="form-text">Registering as a clinician creates your clinic.</div>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit">Register</button>
+      </form>
+      <hr>
+      <p class="small mb-0">Already registered? <a href="{{ url_for('auth.login_page') }}">Log in</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

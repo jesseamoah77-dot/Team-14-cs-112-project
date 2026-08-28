@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Submit - ClinicCare-Lite{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <a class="small" href="{{ url_for('patient.dashboard') }}">&larr; My tasks</a>
+    <h1 class="h4 mt-2">{{ task.title }}</h1>
+    <p>{{ task.description }}</p>
+    <p class="text-body-secondary small">Due {{ task.due_date }}</p>
+
+    {% if task.expected_fields %}
+      <div class="alert alert-info small py-2">
+        Your file should include: <strong>{{ task.expected_fields | join(', ') }}</strong>.
+        The system checks these fields are present and filled in - it does not read
+        or interpret your health information.
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="card p-4">
+      <div class="mb-3">
+        <label class="form-label" for="file">Your file (.txt, .csv or .pdf, up to 5 MB)</label>
+        <input class="form-control" id="file" name="file" type="file"
+               accept=".txt,.csv,.pdf" required>
+        <div class="small text-danger" id="file-feedback"></div>
+      </div>
+      <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

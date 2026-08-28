@@ -1,0 +1,85 @@
+/* Two themes, switched by a body class set from the logged-in user's preference.
+   Clinicians default to dark (long shifts, less glare); patients start colourful
+   and can toggle. Both themes lean on Bootstrap and only restyle the surfaces. */
+
+body.theme-dark {
+  --bs-body-bg: #14181d;
+  --bs-body-color: #d8dee6;
+  --surface: #1c222a;
+  --surface-border: #2a323d;
+  --accent: #4d9fff;
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+body.theme-colorful {
+  --bs-body-bg: #f4f7fb;
+  --bs-body-color: #23303e;
+  --surface: #ffffff;
+  --surface-border: #dde6f0;
+  --accent: #0d6efd;
+  background: linear-gradient(160deg, #f4f7fb 0%, #eef3fa 60%, #e8f6f1 100%);
+  min-height: 100vh;
+  color: var(--bs-body-color);
+}
+
+.main-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--surface-border);
+}
+.theme-dark .main-nav .nav-link, .theme-dark .navbar-brand, .theme-dark .navbar-text {
+  color: #d8dee6;
+}
+.theme-colorful .navbar-brand { color: var(--accent); font-weight: 600; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+}
+.theme-dark .card { color: var(--bs-body-color); }
+.theme-dark .table, .theme-dark .list-group-item {
+  --bs-table-bg: transparent;
+  background: var(--surface);
+  color: var(--bs-body-color);
+}
+.theme-dark .form-control, .theme-dark .form-select {
+  background: #232a33;
+  border-color: #39434f;
+  color: #e6ebf1;
+}
+.theme-dark .form-control::placeholder { color: #7b8794; }
+.theme-dark pre { color: #d8dee6; }
+
+.stat-card { text-align: left; }
+.stat-number { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+
+/* Review-outcome badges: colour by meaning, set from data-outcome in JS-free CSS. */
+.outcome-badge { background: #6c757d; }
+.outcome-badge[data-outcome="Pending"] { background: #6c757d; }
+.outcome-badge[data-outcome="Reviewed - Normal"] { background: #198754; }
+.outcome-badge[data-outcome="Needs Follow-up"] { background: #fd7e14; }
+.outcome-badge[data-outcome="Escalated"] { background: #dc3545; }
+.outcome-badge[data-outcome="Scheduled"] { background: #0d6efd; }
+.outcome-badge[data-outcome="Attended"], .outcome-badge[data-outcome="On time"] { background: #198754; }
+.outcome-badge[data-outcome="No-show"], .outcome-badge[data-outcome="Overdue"],
+.outcome-badge[data-outcome="Late"] { background: #dc3545; }
+.outcome-badge[data-outcome="Cancelled"], .outcome-badge[data-outcome="Not yet submitted"] { background: #6c757d; }
+
+/* Chat */
+.chat-box { max-height: 420px; overflow-y: auto; }
+.chat-msg { display: flex; margin-bottom: .5rem; }
+.chat-msg.mine { justify-content: flex-end; }
+.chat-bubble {
+  max-width: 75%;
+  padding: .45rem .7rem;
+  border-radius: .8rem;
+  background: var(--surface-border);
+}
+.chat-msg.mine .chat-bubble { background: var(--accent); color: #fff; }
+.chat-meta { font-size: .7rem; opacity: .75; margin-top: .15rem; }
+
+/* Keep tables usable on phones - the spec calls mobile use the normal case. */
+@media (max-width: 576px) {
+  .table { font-size: .85rem; }
+  .stat-number { font-size: 1.25rem; }
+}

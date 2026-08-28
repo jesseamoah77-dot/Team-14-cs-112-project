@@ -1,0 +1,45 @@
+Substation ID,Name,Short Name,Region,Country,Latitude,Longitude,Voltage (kV),Capacity (MVA),Commissioning Year,Type,Status
+1,Achimota Substation,Achimota,Greater Accra,Ghana,5.6085,-0.2193,11,6.4,2008,Distribution,Active
+2,Tema Substation,Tema,Greater Accra,Ghana,5.6596,-0.0226,330,48.5,1997,Transmission,Active
+3,Mallam Substation,Mallam,Greater Accra,Ghana,5.563,-0.2971,330,25.2,1979,Transmission,Active
+4,Legon Substation,Legon,Greater Accra,Ghana,5.6401,-0.1799,161,241.9,2009,Transmission,Active
+5,Kaneshie Substation,Kaneshie,Greater Accra,Ghana,5.5691,-0.2413,161,146.0,1970,Transmission,Active
+6,Aboadze Junction Substation,Aboadze Junction,Greater Accra,Ghana,5.5921,-0.1439,161,52.2,2011,Transmission,Active
+7,Kumasi Central Substation,Kumasi Central,Ashanti,Ghana,6.6856,-1.623,161,221.4,2018,Transmission,Active
+8,Ejisu Substation,Ejisu,Ashanti,Ghana,6.7128,-1.4716,330,355.9,2007,Transmission,Active
+9,Obuasi Substation,Obuasi,Ashanti,Ghana,6.2091,-1.6557,33,47.5,1989,Distribution,Active
+10,Mampong Substation,Mampong,Ashanti,Ghana,7.0553,-1.4029,69,189.6,2007,Bulk Supply Point,Active
+11,Konongo Substation,Konongo,Ashanti,Ghana,6.6094,-1.2163,69,285.2,1999,Bulk Supply Point,Active
+12,Takoradi Substation,Takoradi,Western,Ghana,4.9048,-1.7562,33,14.0,2000,Distribution,Active
+13,Aboadze Substation,Aboadze,Western,Ghana,4.9905,-1.7714,33,42.7,1967,Distribution,Active
+14,Tarkwa Substation,Tarkwa,Western,Ghana,5.3093,-1.9927,69,169.4,2010,Bulk Supply Point,Active
+15,Axim Substation,Axim,Western,Ghana,4.8747,-2.2381,69,96.9,1974,Bulk Supply Point,Active
+16,Cape Coast Substation,Cape Coast,Central,Ghana,5.1068,-1.2411,69,68.8,1992,Bulk Supply Point,Active
+17,Winneba Substation,Winneba,Central,Ghana,5.362,-0.6218,330,168.8,1970,Transmission,Active
+18,Kasoa Substation,Kasoa,Central,Ghana,5.5262,-0.4124,11,52.4,2003,Distribution,Active
+19,Assin Fosu Substation,Assin Fosu,Central,Ghana,5.6984,-1.497,11,26.2,2000,Distribution,Active
+20,Koforidua Substation,Koforidua,Eastern,Ghana,6.1017,-0.254,11,42.4,2014,Distribution,Active
+21,Akosombo Substation,Akosombo,Eastern,Ghana,6.2991,0.0641,69,57.9,2021,Bulk Supply Point,Active
+22,Nkawkaw Substation,Nkawkaw,Eastern,Ghana,6.5502,-0.7749,69,389.2,2005,Bulk Supply Point,Active
+23,Suhum Substation,Suhum,Eastern,Ghana,6.035,-0.4535,69,339.0,1975,Bulk Supply Point,Active
+24,Ho Substation,Ho,Volta,Ghana,6.6194,0.473,330,382.1,1996,Transmission,Active
+25,Kpong Substation,Kpong,Volta,Ghana,6.1597,0.1061,11,11.2,1980,Distribution,Active
+26,Hohoe Substation,Hohoe,Volta,Ghana,7.1436,0.4766,11,18.2,2017,Distribution,Active
+27,Sogakope Substation,Sogakope,Volta,Ghana,5.9995,0.5762,11,58.8,2000,Distribution,Active
+28,Sunyani Substation,Sunyani,Bono,Ghana,7.3375,-2.3318,33,19.6,1999,Distribution,Active
+29,Techiman Substation,Techiman,Bono,Ghana,7.5934,-1.9405,33,44.2,2022,Distribution,Active
+30,Berekum Substation,Berekum,Bono,Ghana,7.4443,-2.5946,330,188.8,2000,Transmission,Active
+31,Tamale Substation,Tamale,Northern,Ghana,9.4072,-0.8508,33,37.4,1969,Distribution,Inactive
+32,Yendi Substation,Yendi,Northern,Ghana,9.4368,-0.0076,11,52.3,1978,Distribution,Active
+33,Savelugu Substation,Savelugu,Northern,Ghana,9.6264,-0.8265,330,65.9,2015,Transmission,Active
+34,Bolgatanga Substation,Bolgatanga,Upper East,Ghana,10.7789,-0.8524,161,325.9,1992,Transmission,Active
+35,Bawku Substation,Bawku,Upper East,Ghana,11.0615,-0.2333,161,194.8,1971,Transmission,Active
+36,Wa Substation,Wa,Upper West,Ghana,10.0682,-2.506,11,27.1,1977,Distribution,Active
+37,Bolgatanga Interconnection,Bolgatanga Interconnection,Burkina Faso border,Burkina,11.2,-0.75,330,156.1,1991,Transmission,Active
+38,Elubo Border Station,Elubo Border Station,Cote d'Ivoire border,Cote,5.2,-2.85,330,285.1,1984,Transmission,Active
+39,Aflao Border Station,Aflao Border Station,Togo border,Togo,6.12,1.19,330,423.2,2015,Transmission,Active
+40,Lome Transmission Hub,Lome Transmission Hub,Togo,Togo,6.13,1.22,161,120.2,2014,Transmission,Active
+41,Cotonou Transmission Hub,Cotonou Transmission Hub,Benin,Benin,6.37,2.43,161,487.6,1995,Transmission,Active
+42,Abidjan Transmission Hub,Abidjan Transmission Hub,Cote d'Ivoire,Cote,5.35,-4.0,161,262.6,2010,Transmission,Active
+43,Bobo-Dioulasso Hub,Bobo-Dioulasso Hub,Burkina Faso,Burkina,11.18,-4.3,161,445.9,1983,Transmission,Active
+44,Conakry Transmission Hub,Conakry Transmission Hub,Guinea,Guinea,9.64,-13.58,161,251.6,2004,Transmission,Active

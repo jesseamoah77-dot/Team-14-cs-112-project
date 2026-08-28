@@ -1,0 +1,43 @@
+,Degree,Degree centrality,Betweenness,Closeness,PageRank,Clustering,Region
+Cape Coast Substation,5,0.122,0.5787,0.277,0.0383,0.2,Central
+Takoradi Substation,4,0.0976,0.5683,0.2733,0.0306,0.1667,Western
+Kumasi Central Substation,5,0.122,0.5512,0.2562,0.0396,0.1,Ashanti
+Koforidua Substation,4,0.0976,0.5488,0.2662,0.0318,0.1667,Eastern
+Ho Substation,4,0.0976,0.4805,0.244,0.0358,0.1667,Volta
+Sunyani Substation,3,0.0732,0.3683,0.2158,0.0309,0.0,Bono
+Achimota Substation,4,0.0976,0.3236,0.2228,0.0289,0.3333,Greater Accra
+Tamale Substation,3,0.0732,0.2622,0.1881,0.0335,0.0,Northern
+Bolgatanga Substation,4,0.0976,0.1866,0.164,0.0473,0.0,Upper East
+Tema Substation,4,0.0976,0.1528,0.1916,0.0304,0.3333,Greater Accra
+Aflao Border Station,2,0.0488,0.0951,0.164,0.0201,0.0,Togo border
+Konongo Substation,4,0.0976,0.0951,0.2103,0.0335,0.3333,Ashanti
+Mallam Substation,5,0.122,0.06,0.1907,0.0351,0.5,Greater Accra
+Bolgatanga Interconnection,2,0.0488,0.0488,0.1424,0.0261,0.0,Burkina Faso border
+Sogakope Substation,3,0.0732,0.0488,0.2,0.0297,0.3333,Volta
+Lome Transmission Hub,2,0.0488,0.0488,0.1424,0.0237,0.0,Togo
+Elubo Border Station,2,0.0488,0.0488,0.2071,0.0209,0.0,Cote d'Ivoire border
+Techiman Substation,2,0.0488,0.0488,0.1798,0.024,0.0,Bono
+Aboadze Substation,3,0.0732,0.0238,0.2193,0.0244,0.6667,Western
+Akosombo Substation,3,0.0732,0.0238,0.2147,0.0249,0.6667,Eastern
+Tarkwa Substation,3,0.0732,0.0238,0.2193,0.0244,0.6667,Western
+Nkawkaw Substation,3,0.0732,0.0238,0.2147,0.0249,0.6667,Eastern
+Kaneshie Substation,3,0.0732,0.0138,0.1864,0.0218,0.6667,Greater Accra
+Legon Substation,4,0.0976,0.0047,0.1647,0.0288,0.5,Greater Accra
+Kasoa Substation,3,0.0732,0.0006,0.2204,0.0246,0.6667,Central
+Aboadze Junction Substation,2,0.0488,0.0,0.1614,0.0157,1.0,Greater Accra
+Mampong Substation,2,0.0488,0.0,0.2081,0.0174,1.0,Ashanti
+Obuasi Substation,2,0.0488,0.0,0.1752,0.0186,1.0,Ashanti
+Ejisu Substation,2,0.0488,0.0,0.1752,0.0186,1.0,Ashanti
+Kpong Substation,2,0.0488,0.0,0.199,0.0196,1.0,Volta
+Axim Substation,2,0.0488,0.0,0.1814,0.0174,1.0,Western
+Winneba Substation,2,0.0488,0.0,0.2193,0.017,1.0,Central
+Suhum Substation,2,0.0488,0.0,0.1783,0.0177,1.0,Eastern
+Assin Fosu Substation,2,0.0488,0.0,0.2193,0.017,1.0,Central
+Hohoe Substation,1,0.0244,0.0,0.1673,0.012,0.0,Volta
+Bawku Substation,1,0.0244,0.0,0.1414,0.0136,0.0,Upper East
+Berekum Substation,1,0.0244,0.0,0.153,0.0138,0.0,Bono
+Yendi Substation,1,0.0244,0.0,0.1589,0.0131,0.0,Northern
+Wa Substation,1,0.0244,0.0,0.1414,0.0136,0.0,Upper West
+Cotonou Transmission Hub,1,0.0244,0.0,0.125,0.0137,0.0,Benin
+Abidjan Transmission Hub,1,0.0244,0.0,0.1723,0.0125,0.0,Cote d'Ivoire
+Bobo-Dioulasso Hub,1,0.0244,0.0,0.125,0.0147,0.0,Burkina Faso

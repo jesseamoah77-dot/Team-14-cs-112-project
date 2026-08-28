@@ -1,0 +1,11 @@
+Utility ID,Name,Alias,Code,Type,Country,Active
+1,Electricity Company of Ghana,ECG,ECG,Distribution,Ghana,Y
+2,Northern Electricity Distribution Company,NEDCo,NED,Distribution,Ghana,Y
+3,Ghana Grid Company,GRIDCo,GRD,Transmission,Ghana,Y
+4,Volta River Authority,VRA,VRA,Generation,Ghana,Y
+5,Compagnie Ivoirienne d'Electricite,CIE,CIE,Distribution,Cote d'Ivoire,Y
+6,Communaute Electrique du Benin,CEB,CEB,Transmission,Togo/Benin,Y
+7,Societe Beninoise d'Energie Electrique,SBEE,SBE,Distribution,Benin,Y
+8,Electricite de Guinee,EDG,EDG,Distribution,Guinea,N
+9,Sonabel,SONABEL,SNB,Distribution,Burkina Faso,Y
+10,Enclave Power Company,EPC,EPC,Generation,Ghana,N

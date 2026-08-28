@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Log in - ClinicCare-Lite{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card p-4">
+      <h1 class="h4 mb-1">Log in</h1>
+      <p class="text-body-secondary small mb-3">Clinic administration and communication</p>
+      <form method="post" action="{{ url_for('auth.login') }}">
+        <div class="mb-3">
+          <label class="form-label" for="user_id">Your 8-digit ID</label>
+          <input class="form-control" id="user_id" name="user_id" inputmode="numeric"
+                 pattern="\d{8}" maxlength="8" required
+                 placeholder="e.g. 12350000 or 12342024">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control" id="password" name="password" type="password" required>
+        </div>
+        <button class="btn btn-primary w-100" type="submit">Log in</button>
+      </form>
+      <hr>
+      <p class="small mb-0">New here? <a href="{{ url_for('auth.register_page') }}">Register</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

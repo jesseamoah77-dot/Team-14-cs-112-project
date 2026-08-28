@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My history - ClinicCare-Lite{% endblock %}
+{% block content %}
+<h1 class="h4 mb-1">My history</h1>
+<p class="text-body-secondary small mb-3">Your own tasks and appointments - nobody else's data appears here.</p>
+
+<div class="row g-3 mb-4">
+  {% for label, value in [
+      ("Tasks assigned", history.tasks_assigned),
+      ("Tasks submitted", history.tasks_submitted),
+      ("Appointments attended", history.appointments_attended),
+      ("Appointments missed", history.appointments_missed),
+  ] %}
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3 text-center">
+      <div class="stat-number">{{ value }}</div>
+      <div class="small">{{ label }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<h2 class="h6">Task timeline</h2>
+<div class="table-responsive card">
+  <table class="table table-sm align-middle mb-0">
+    <thead><tr><th>Task</th><th>Due</th><th>Status</th><th>Review</th></tr></thead>
+    <tbody>
+    {% for t in history.timeline %}
+      <tr>
+        <td>{{ t.title }}</td>
+        <td>{{ t.due_date }}</td>
+        <td><span class="badge outcome-badge" data-outcome="{{ t.status }}">{{ t.status }}</span></td>
+        <td>{{ t.review or '-' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4" class="text-body-secondary">No tasks yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

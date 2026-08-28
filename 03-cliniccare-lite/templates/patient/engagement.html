@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}My progress - ClinicCare-Lite{% endblock %}
+{% block content %}
+<h1 class="h4 mb-1">My progress</h1>
+<p class="text-body-secondary small mb-3">
+  This page is private to you. Your points and streaks are never shown to, or
+  compared with, any other patient.
+</p>
+
+<div class="row g-3 mb-4">
+  <div class="col-4">
+    <div class="card stat-card p-3 text-center">
+      <div class="stat-number">{{ summary.points }}</div>
+      <div class="small">Engagement points</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card stat-card p-3 text-center">
+      <div class="stat-number">{{ summary.streak }}</div>
+      <div class="small">On-time streak</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card stat-card p-3 text-center">
+      <div class="stat-number">{{ summary.this_month }}</div>
+      <div class="small">Points this month</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="h6">Recent activity</h2>
+<ul class="list-group">
+  {% for h in summary.history | reverse %}
+    <li class="list-group-item d-flex justify-content-between">
+      <span>{{ h.reason }}</span>
+      <span>{{ '+' if h.points > 0 }}{{ h.points }} EP
+        <span class="text-body-secondary small">{{ h.at }}</span></span>
+    </li>
+  {% else %}
+    <li class="list-group-item text-body-secondary">
+      Complete a task on time or attend an appointment to start earning points.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

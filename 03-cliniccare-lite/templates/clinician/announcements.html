@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Announcements - ClinicCare-Lite{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Clinic announcements</h1>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <form method="post" class="card p-4">
+      <h2 class="h6">New announcement</h2>
+      <div class="mb-3">
+        <label class="form-label" for="title">Title</label>
+        <input class="form-control" id="title" name="title" required
+               placeholder="e.g. Closed for the public holiday">
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="body">Text</label>
+        <textarea class="form-control" id="body" name="body" rows="3" required></textarea>
+      </div>
+      <div class="row">
+        <div class="col-6 mb-3">
+          <label class="form-label" for="publish_date">Publish</label>
+          <input class="form-control" id="publish_date" name="publish_date" type="date">
+          <div class="form-text">Blank = today</div>
+        </div>
+        <div class="col-6 mb-3">
+          <label class="form-label" for="expiry_date">Expires</label>
+          <input class="form-control" id="expiry_date" name="expiry_date" type="date">
+          <div class="form-text">Blank = never</div>
+        </div>
+      </div>
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="urgent" id="urgent">
+        <label class="form-check-label" for="urgent">Urgent - also email every patient</label>
+      </div>
+      <button class="btn btn-primary" type="submit">Publish</button>
+    </form>
+  </div>
+  <div class="col-lg-7">
+    <h2 class="h6">All announcements (newest first)</h2>
+    {% for a in announcements %}
+      <div class="card p-3 mb-2">
+        <div class="d-flex justify-content-between">
+          <strong>{{ a.title }}</strong>
+          <span>
+            {% if a.urgent %}<span class="badge text-bg-danger">urgent</span>{% endif %}
+            {% if a.expiry_date and a.expiry_date < now_date %}<span class="badge text-bg-secondary">expired</span>{% endif %}
+          </span>
+        </div>
+        <div class="small">{{ a.body }}</div>
+        <div class="text-body-secondary small mt-1">
+          {{ a.publish_date }}{% if a.expiry_date %} &rarr; {{ a.expiry_date }}{% endif %}
+        </div>
+      </div>
+    {% else %}
+      <p class="text-body-secondary">Nothing published yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

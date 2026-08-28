@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}My tasks - ClinicCare-Lite{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h4 mb-0">Hello, {{ user.name.split(' ')[0] }}</h1>
+    {% if clinician %}
+      <span class="text-body-secondary small">Your clinician: {{ clinician.name }}</span>
+    {% endif %}
+  </div>
+  <a class="btn btn-outline-primary btn-sm" href="{{ url_for('patient.thread') }}">Message clinician</a>
+</div>
+
+{% for a in announcements %}
+  <div class="alert {{ 'alert-danger' if a.urgent else 'alert-info' }} py-2">
+    <strong>{{ a.title }}</strong> - {{ a.body }}
+  </div>
+{% endfor %}
+
+{% if appointments %}
+<h2 class="h6">Upcoming appointments</h2>
+<ul class="list-group mb-4">
+  {% for appointment_id, a in appointments.items() %}
+    <li class="list-group-item d-flex justify-content-between">
+      <span>{{ a.purpose }}</span>
+      <strong>{{ a.when }}</strong>
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<h2 class="h6">Your health tasks</h2>
+<div class="row g-3">
+  {% for task_id, t in tasks.items() %}
+    <div class="col-md-6">
+      <div class="card p-3 h-100">
+        <div class="d-flex justify-content-between">
+          <strong>{{ t.title }}</strong>
+          {% if t.submission %}
+            <span class="badge outcome-badge" data-outcome="{{ t.submission.review.outcome }}">
+              {{ t.submission.review.outcome }}</span>
+          {% elif t.due_date < now_date %}
+            <span class="badge text-bg-danger">Overdue</span>
+          {% else %}
+            <span class="badge text-bg-secondary">Not submitted</span>
+          {% endif %}
+        </div>
+        <p class="small mb-2">{{ t.description }}</p>
+        <div class="text-body-secondary small mb-2">Due {{ t.due_date }}</div>
+        {% if t.submission %}
+          <div class="small">
+            Submitted {{ t.submission.submitted_at }}
+            {% if t.submission.review.notes %}
+              <div class="alert alert-light border small py-1 px-2 mt-1 mb-0">
+                Clinician notes: {{ t.submission.review.notes }}</div>
+            {% endif %}
+          </div>
+        {% else %}
+          <a class="btn btn-sm btn-primary mt-auto align-self-start"
+             href="{{ url_for('patient.submit', task_id=task_id) }}">Submit</a>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <p class="text-body-secondary">No tasks assigned yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

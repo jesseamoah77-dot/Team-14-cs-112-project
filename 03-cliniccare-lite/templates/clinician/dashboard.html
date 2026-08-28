@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Clinician dashboard - ClinicCare-Lite{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h4 mb-0">{{ clinic.name }}</h1>
+    <span class="text-body-secondary small">Dr {{ user.name }} &middot; {{ patients|length }} registered patient(s)</span>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('clinician.new_task') }}">New health task</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="stat-number">{{ pending|length }}</div>
+      <div class="small">Submissions awaiting review</div>
+      {% if pending %}<a class="small" href="{{ url_for('clinician.submissions', outcome='Pending') }}">Review now</a>{% endif %}
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="stat-number">{{ tasks|length }}</div>
+      <div class="small">Active health tasks</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="stat-number">{{ unread }}</div>
+      <div class="small">Unread messages</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-card p-3">
+      <div class="stat-number">{{ announcements|length }}</div>
+      <div class="small">Active announcements</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <h2 class="h6">Health tasks</h2>
+    <div class="table-responsive card">
+      <table class="table table-sm mb-0 align-middle">
+        <thead><tr><th>ID</th><th>Title</th><th>Due</th><th>Assigned</th></tr></thead>
+        <tbody>
+        {% for task_id, t in tasks.items() %}
+          <tr>
+            <td>{{ task_id }}</td>
+            <td>{{ t.title }}</td>
+            <td>{{ t.due_date }}</td>
+            <td>{{ t.assigned_patient_ids|length }} patient(s)</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4" class="text-body-secondary">No tasks yet - create the first one.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <h2 class="h6">Patients</h2>
+    <ul class="list-group">
+      {% for patient_id, p in patients.items() %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ p.name }} <span class="text-body-secondary small">({{ patient_id }})</span></span>
+          <a class="btn btn-sm btn-outline-primary"
+             href="{{ url_for('clinician.thread', patient_id=patient_id) }}">Message</a>
+        </li>
+      {% else %}
+        <li class="list-group-item text-body-secondary">No patients registered yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

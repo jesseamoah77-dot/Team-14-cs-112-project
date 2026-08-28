@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Messages - ClinicCare-Lite{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <a class="small" href="{{ back_url }}">&larr; Back</a>
+    <h1 class="h4 mt-2">Conversation with {{ other.name }}</h1>
+
+    {# The spec requires this warning to be persistent on the messaging interface. #}
+    <div class="alert alert-warning py-2 small">
+      This messaging channel is <strong>not monitored continuously</strong> and must
+      not be used for emergencies or urgent clinical matters. In an emergency,
+      contact your local emergency services.
+    </div>
+
+    <div class="card p-3 mb-3 chat-box">
+      {% for m in messages %}
+        <div class="chat-msg {{ 'mine' if m.sender_id == user.user_id else 'theirs' }}">
+          <div class="chat-bubble">
+            {{ m.content }}
+            <div class="chat-meta">{{ m.timestamp }}{% if m.sender_id == user.user_id %}
+              &middot; {{ 'read' if m.read else 'unread' }}{% endif %}</div>
+          </div>
+        </div>
+      {% else %}
+        <p class="text-body-secondary small mb-0">No messages yet.</p>
+      {% endfor %}
+    </div>
+
+    <form method="post" action="{{ post_url }}" class="d-flex gap-2">
+      <input class="form-control" name="content" placeholder="Write a non-urgent message..."
+             required maxlength="2000">
+      <button class="btn btn-primary" type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+{# Near-real-time via periodic polling: check the pair's message count every 5s and
+   reload when it changes, so a reply appears without a manual refresh. #}
+<script>
+  (function () {
+    var count = {{ messages|length }};
+    setInterval(function () {
+      fetch("{{ post_url }}/poll")
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (data && data.count !== count) window.location.reload();
+        })
+        .catch(function () {});  // transient failures: just try again next tick
+    }, 5000);
+  })();
+</script>
+{% endblock %}

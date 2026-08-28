@@ -1,0 +1,43 @@
+Removed,Region,Components after,Largest piece,Nodes cut off
+Cape Coast Substation,Central,3,20,21
+Takoradi Substation,Western,3,22,19
+Koforidua Substation,Eastern,3,24,17
+Kumasi Central Substation,Ashanti,4,26,15
+Ho Substation,Volta,3,28,13
+Sunyani Substation,Bono,3,32,9
+Achimota Substation,Greater Accra,2,33,8
+Tamale Substation,Northern,3,35,6
+Bolgatanga Substation,Upper East,4,37,4
+Tema Substation,Greater Accra,2,38,3
+Konongo Substation,Ashanti,2,39,2
+Aflao Border Station,Togo border,2,39,2
+Sogakope Substation,Volta,2,40,1
+Techiman Substation,Bono,2,40,1
+Bolgatanga Interconnection,Burkina Faso border,2,40,1
+Elubo Border Station,Cote d'Ivoire border,2,40,1
+Lome Transmission Hub,Togo,2,40,1
+Mallam Substation,Greater Accra,1,41,0
+Legon Substation,Greater Accra,1,41,0
+Kaneshie Substation,Greater Accra,1,41,0
+Aboadze Junction Substation,Greater Accra,1,41,0
+Ejisu Substation,Ashanti,1,41,0
+Obuasi Substation,Ashanti,1,41,0
+Mampong Substation,Ashanti,1,41,0
+Aboadze Substation,Western,1,41,0
+Tarkwa Substation,Western,1,41,0
+Axim Substation,Western,1,41,0
+Winneba Substation,Central,1,41,0
+Kasoa Substation,Central,1,41,0
+Assin Fosu Substation,Central,1,41,0
+Akosombo Substation,Eastern,1,41,0
+Nkawkaw Substation,Eastern,1,41,0
+Suhum Substation,Eastern,1,41,0
+Kpong Substation,Volta,1,41,0
+Hohoe Substation,Volta,1,41,0
+Berekum Substation,Bono,1,41,0
+Yendi Substation,Northern,1,41,0
+Bawku Substation,Upper East,1,41,0
+Wa Substation,Upper West,1,41,0
+Cotonou Transmission Hub,Benin,1,41,0
+Abidjan Transmission Hub,Cote d'Ivoire,1,41,0
+Bobo-Dioulasso Hub,Burkina Faso,1,41,0

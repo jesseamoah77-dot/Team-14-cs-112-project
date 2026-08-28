@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}New health task - ClinicCare-Lite{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <a class="small" href="{{ url_for('clinician.dashboard') }}">&larr; Dashboard</a>
+    <h1 class="h4 mt-2 mb-3">New health task</h1>
+    <form method="post" class="card p-4">
+      <div class="mb-3">
+        <label class="form-label" for="title">Title</label>
+        <input class="form-control" id="title" name="title" required
+               value="{{ form.title if form else '' }}"
+               placeholder="e.g. Weekly blood-pressure log">
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="description">Instructions for the patient</label>
+        <textarea class="form-control" id="description" name="description" rows="4" required
+                  placeholder="What should the patient record, how, and in what file?">{{ form.description if form else '' }}</textarea>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="due_date">Due date</label>
+          <input class="form-control" id="due_date" name="due_date" type="date" required
+                 value="{{ form.due_date if form else '' }}">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="expected_fields">Expected fields <span class="text-body-secondary">(optional)</span></label>
+          <input class="form-control" id="expected_fields" name="expected_fields"
+                 value="{{ form.expected_fields if form else '' }}"
+                 placeholder="e.g. Date, Systolic, Diastolic">
+          <div class="form-text">
+            Comma-separated. Used only to check a .csv/.txt submission is complete -
+            the system never interprets the values.
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Assign to</label>
+        {% for patient_id, p in patients.items() %}
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="patients"
+                   value="{{ patient_id }}" id="p-{{ patient_id }}">
+            <label class="form-check-label" for="p-{{ patient_id }}">{{ p.name }} ({{ patient_id }})</label>
+          </div>
+        {% else %}
+          <p class="text-body-secondary small">No patients registered to your clinic yet.</p>
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary" type="submit">Create and notify patients</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

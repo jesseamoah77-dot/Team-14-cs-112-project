@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Review submission - ClinicCare-Lite{% endblock %}
+{% block content %}
+<a class="small" href="{{ url_for('clinician.submissions') }}">&larr; All submissions</a>
+<div class="row g-4 mt-1">
+  <div class="col-lg-7">
+    <h1 class="h5">{{ task.title }} - {{ patient.name }}</h1>
+    <p class="text-body-secondary small">
+      Submitted {{ sub.submitted_at }} &middot; file: {{ sub.file_path.split('/')[-1] }}
+      &middot; <a href="{{ url_for('clinician.download', key=key) }}">download</a>
+    </p>
+
+    {% if not sub.completeness.get('complete', True) %}
+      <div class="alert alert-warning small py-2">
+        Completeness check noted:
+        <ul class="mb-0">
+          {% for p in sub.completeness.problems %}<li>{{ p }}</li>{% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if preview and preview.kind == 'csv' %}
+      <div class="table-responsive card">
+        <table class="table table-sm mb-0">
+          {% for row in preview.rows %}
+            {% if loop.first %}
+              <thead><tr>{% for cell in row %}<th>{{ cell }}</th>{% endfor %}</tr></thead><tbody>
+            {% else %}
+              <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% elif preview and preview.kind == 'txt' %}
+      <pre class="card p-3 small">{{ preview.text }}</pre>
+    {% elif preview and preview.kind == 'missing' %}
+      <div class="alert alert-danger py-2 small">The stored file is missing.</div>
+    {% else %}
+      <p class="text-body-secondary small">PDF submission - use download to view it.</p>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card p-4">
+      <h2 class="h6">Record review</h2>
+      {% if sub.review.outcome != 'Pending' %}
+        <div class="alert alert-success small py-2">
+          Reviewed {{ sub.review.reviewed_at }} - {{ sub.review.outcome }}
+          {% if sub.review.notes %}<br>Notes: {{ sub.review.notes }}{% endif %}
+        </div>
+      {% else %}
+      <form method="post" action="{{ url_for('clinician.review', key=key) }}">
+        <div class="mb-3">
+          <label class="form-label">Outcome</label>
+          {% for o in outcomes %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="outcome"
+                     id="o-{{ loop.index }}" value="{{ o }}" required>
+              <label class="form-check-label" for="o-{{ loop.index }}">{{ o }}</label>
+            </div>
+          {% endfor %}
+          <div class="form-text">
+            Administrative categories, not a score - the patient sees the outcome
+            and your notes.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="notes">Notes to the patient (optional)</label>
+          <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Save review and notify patient</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

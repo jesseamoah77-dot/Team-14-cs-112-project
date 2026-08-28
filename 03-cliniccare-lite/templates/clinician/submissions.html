@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Submissions - ClinicCare-Lite{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Patient submissions</h1>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">
+    <select class="form-select form-select-sm" name="task">
+      <option value="">All tasks</option>
+      {% for task_id, t in tasks.items() %}
+        <option value="{{ task_id }}" {{ 'selected' if args.get('task') == task_id }}>{{ task_id }} - {{ t.title }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <select class="form-select form-select-sm" name="patient">
+      <option value="">All patients</option>
+      {% for patient_id, p in patients.items() %}
+        <option value="{{ patient_id }}" {{ 'selected' if args.get('patient') == patient_id }}>{{ p.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <select class="form-select form-select-sm" name="outcome">
+      <option value="">Any status</option>
+      {% for o in outcomes %}
+        <option value="{{ o }}" {{ 'selected' if args.get('outcome') == o }}>{{ o }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-sm btn-outline-primary" type="submit">Filter</button>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('clinician.submissions') }}">Clear</a>
+  </div>
+</form>
+
+<div class="table-responsive card">
+  <table class="table table-sm align-middle mb-0">
+    <thead>
+      <tr><th>Submission</th><th>Patient</th><th>Task</th><th>Submitted</th>
+          <th>Completeness</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for key, s in submissions.items() %}
+      <tr>
+        <td>{{ key }}</td>
+        <td>{{ patients[s.patient_id].name if s.patient_id in patients else s.patient_id }}</td>
+        <td>{{ tasks[s.task_id].title if s.task_id in tasks else s.task_id }}</td>
+        <td>{{ s.submitted_at }}{% if s.resubmission %} <span class="badge text-bg-secondary">resubmitted</span>{% endif %}</td>
+        <td>
+          {% if s.completeness.get('complete') %}
+            <span class="badge text-bg-success">complete</span>
+          {% else %}
+            <span class="badge text-bg-warning">issues noted</span>
+          {% endif %}
+        </td>
+        <td><span class="badge outcome-badge" data-outcome="{{ s.review.outcome }}">{{ s.review.outcome }}</span></td>
+        <td><a class="btn btn-sm btn-outline-primary"
+               href="{{ url_for('clinician.submission_detail', key=key) }}">Open</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="7" class="text-body-secondary">No submissions match.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
